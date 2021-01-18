@@ -2,8 +2,8 @@ const express = require("express");
 const logger = require("../config/loggerUtil");
 const router = express.Router();
 
-/*const uploadRouter = require("./uploadService");
-const invoiceService = require("./invoiceService");
+const officialService = require("./officialService");
+/*const invoiceService = require("./invoiceService");
 const suppliersService = require("./suppliersService");
 const reportsService = require("./reportsService");
 const filtersService = require("./filtersService");*/
@@ -15,8 +15,8 @@ router.use((req, res, next) => {
   next();
 });
 
-/*router.use(uploadRouter);
-router.use(invoiceService);
+router.use(officialService);
+/*router.use(invoiceService);
 router.use(suppliersService);
 router.use(reportsService);
 router.use(filtersService);*/

@@ -20,8 +20,8 @@ const logger = winston.createLogger({
   ),
   transports: [
     new winston.transports.Console(),
-    // Add Stackdriver Logging
-    //loggingWinston,
+    // Add Stackdriver loging
+    //logingWinston,
   ],
 });
 
