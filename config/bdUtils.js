@@ -13,14 +13,9 @@ const pool = mariadb.createPool({
     connectionLimit: 5
 });
 
-const searchOne = async function (sql) {
-    return sql;
-}
-
 const query = async function (sql) {
-    logger.info("bdUtils --> query()");
     logger.info("bdUtils --> query() --> sql:" + sql);
-    let conn, rows, result;
+    let conn, rows;
     try {
 
         conn = await pool.getConnection();
@@ -28,11 +23,27 @@ const query = async function (sql) {
         rows = await conn.query(sql);
         logger.info("bdUtils --> query() --> connection execute SQL");
         //delete rows.meta;
-        //console.log(rows);
-        //const res = await conn.query("INSERT INTO myTable value (?, ?)", [1, "mariadb"]);
-        //console.log(res); // { affectedRows: 1, insertId: 1, warningStatus: 0 }
         logger.info("bdUtils --> query() --> result: " + JSON.stringify(rows));
         return rows;
+    } catch (err) {
+        console.log(err);
+        throw err;
+    } finally {
+        if (conn) conn.end();
+    }
+}
+
+const executeQuery = async function (sql) {
+    logger.info("bdUtils --> executeQuery() --> sql:" + sql);
+    let conn, res;
+    try {
+        conn = await pool.getConnection();
+        logger.info("bdUtils --> executeQuery() --> connection");
+        res = await conn.query(sql);
+        logger.info("bdUtils --> executeQuery() --> connection execute SQL");
+        console.log(res); // { affectedRows: 1, insertId: 1, warningStatus: 0 }
+        logger.info("bdUtils --> executeQuery() --> result: " + JSON.stringify(res));
+        return res;
     } catch (err) {
         console.log(err);
         throw err;
@@ -44,5 +55,5 @@ const query = async function (sql) {
 
 module.exports = {
     query,
-    searchOne
+    executeQuery
 };
