@@ -14,6 +14,7 @@ const pool = mariadb.createPool({
 });
 
 const query = async function (sql) {
+    logger.info("bdUtils --> pool:" + JSON.stringify(pool));
     logger.info("bdUtils --> query() --> sql:" + sql);
     let conn, rows;
     try {
@@ -34,6 +35,7 @@ const query = async function (sql) {
 }
 
 const executeQuery = async function (sql) {
+    logger.info("bdUtils --> pool:" + JSON.stringify(pool));
     logger.info("bdUtils --> executeQuery() --> sql:" + sql);
     let conn, res;
     try {

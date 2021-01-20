@@ -10,7 +10,7 @@ app.use(cors());
 app.use(router);
 
 app.get("/", function (req, res) {
-  res.send("api-metropoli!");
+  res.send("api-metropoli! v1");
 });
 
 const PORT = process.env.PORT || 3001;
