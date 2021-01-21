@@ -61,7 +61,7 @@ const login = async function (data) {
                 official[0].modules = modules;
             } else {
                 res.status = false;
-                res.message = "El usuario se encuentra inactivo!"
+                res.message = "El usuario se encuentra deshabilitado!"
                 return res;
             }
         } else {
@@ -72,7 +72,7 @@ const login = async function (data) {
         //logger.info("officialHandler -->  OFFICIAL:" + JSON.stringify(official));
         res.status = true;
         res.message = "OK";
-        res.data = official;
+        res.data = official[0];
         return res;
     } catch (err) {
         logger.error("officialHandler --> login() --> Error!");
@@ -90,7 +90,7 @@ const create = async function (data) {
     var res = new Object();
     try {
         //logger.info("officialHandler --> create:" + SQL);
-        let official = await bdUtils.executeQuery(SQL.INSERT_OFFICIALS
+        let official = await bdUtils.executeQuery(SQL.INSERT_OFFICIAL
             .replace(":document", data.document)
             .replace(":document_type", data.document_type)
             .replace(":name", data.name)
@@ -129,7 +129,7 @@ const update = async function (data) {
     var res = new Object();
     try {
         //logger.info("officialHandler --> update:" + SQL);
-        let official = await bdUtils.executeQuery(SQL.UPDATE_OFFICIALS
+        let official = await bdUtils.executeQuery(SQL.UPDATE_OFFICIAL
             .replace(":document", data.document)
             .replace(":document_type", data.document_type)
             .replace(":name", data.name)
@@ -146,7 +146,7 @@ const update = async function (data) {
         );
         logger.info("officialHandler --> official:" + JSON.stringify(official));
         if (typeof official !== 'undefined') {
-            if (official.affectedRows > 0) {
+            if (official[0].affectedRows > 0) {
                 res.status = true;
                 res.message = "OK";
                 res.data = data;
@@ -179,7 +179,7 @@ const updatePassword = async function (data) {
         );
         logger.info("officialHandler --> official:" + JSON.stringify(official));
         if (typeof official !== 'undefined') {
-            if (official.affectedRows > 0) {
+            if (official[0].affectedRows > 0) {
                 res.status = true;
                 res.message = "OK";
                 res.data = "Contraseña actualizada!";

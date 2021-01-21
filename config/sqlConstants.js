@@ -12,10 +12,10 @@ const SQL = {
         JOIN modules m ON m.id = o.module_id
         WHERE r.id = :role_id
         ORDER BY m.id, o.id`,
-    INSERT_OFFICIALS:
+    INSERT_OFFICIAL:
         `INSERT INTO officials (document, document_type, name, last_name, municipality, neighborhood, address, complement_address, phone1, phone2, email, password, customer_id, role_id) 
          VALUES (':document', ':document_type', ':name', ':last_name', ':municipality', ':neighborhood', ':address', ':complement_address', ':phone1', ':phone2', ':email', ':password', ':customer_id', ':role_id')`,
-    UPDATE_OFFICIALS:
+    UPDATE_OFFICIAL:
         `UPDATE officials SET name=':name', last_name=':last_name', municipality=':municipality', neighborhood=':neighborhood', address=':address', 
                 complement_address=':complement_address', phone1=':phone1', phone2=':phone2', email=':email', role_id=':role_id', status=':status' 
         WHERE  document=:document AND document_type=':document_type'`,
@@ -25,7 +25,16 @@ const SQL = {
     LIST_OFFICIALS:
         `SELECT document, document_type, name, last_name, municipality, neighborhood, address, complement_address, phone1, phone2, email, role_id, status 
         FROM officials
-        WHERE customer_id = ':customer_id'`
+        WHERE customer_id = ':customer_id'`,
+    LIST_CUSTOMERS:
+        `SELECT * FROM customers`,
+    INSERT_CUSTOMER:
+        `INSERT INTO customers (document, document_type, business_name, deparment, municipality, address, complement_address, email, phone1, phone2) 
+        VALUES (':document', ':document_type', ':business_name', ':department', ':municipality', ':address', ':complement_address', ':email', ':phone1', ':phone2')`,
+    UPDATE_CUSTOMER:
+        `UPDATE customers SET document=':document', document_type=':document_type', business_name=':business_name', deparment=':deparment', municipality=':municipality', 
+                address=':address', complement_address=':complement_address', email=':email', phone1=':phone1', phone2=':phone2', status='0:status' 
+        WHERE  id=:id`,
 }
 
 module.exports = {

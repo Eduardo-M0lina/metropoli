@@ -3,10 +3,7 @@ const logger = require("../config/loggerUtil");
 const router = express.Router();
 
 const officialService = require("./officialService");
-/*const invoiceService = require("./invoiceService");
-const suppliersService = require("./suppliersService");
-const reportsService = require("./reportsService");
-const filtersService = require("./filtersService");*/
+const customerService = require("./customerService");
 
 router.use((req, res, next) => {
   logger.info(`Called:  ${req.path}`);
@@ -16,9 +13,6 @@ router.use((req, res, next) => {
 });
 
 router.use(officialService);
-/*router.use(invoiceService);
-router.use(suppliersService);
-router.use(reportsService);
-router.use(filtersService);*/
+router.use(customerService);
 
 module.exports = router;
