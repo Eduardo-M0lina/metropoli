@@ -1,8 +1,9 @@
 const SQL = {
     LOGING:
-        `SELECT document, document_type, name, last_name, municipality, neighborhood, address, complement_address, phone1, phone2, email, role_id, status ` +
-        `FROM OFFICIALS ` +
-        `WHERE document = :document AND document_type = ':document_type' AND password = ':password' `,
+        `SELECT o.document, o.document_type, o.name, o.last_name, o.municipality, o.neighborhood, o.address, o.complement_address, o.phone1, o.phone2, o.email, o.role_id, r.name AS 'roleName', o.status ` +
+        `FROM officials o ` +
+        `JOIN roles r ON r.id = o.role_id ` +
+        `WHERE o.document = :document AND o.document_type = ':document_type' AND o.password = ':password' `,
     ROLES_OPTIONS:
         `SELECT m.id AS module_id, m.name AS module_name, o.id AS option_id, o.name AS option_name 
         FROM roles r
