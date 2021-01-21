@@ -1,56 +1,72 @@
 
-const mariadb = require('mariadb');
+const mysql = require('mysql2');
 const dotenv = require("dotenv");
 const logger = require("./loggerUtil");
 
 dotenv.config();
 
-const pool = mariadb.createPool({
+/*const pool = mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PWD,
-    database: process.env.DB_NAME,
-    connectionLimit: 5
+    database: process.env.DB_NAME
+});
+
+var connection = mysql.createConnection({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PWD,
+    database: process.env.DB_NAME
+});*/
+
+const pool = mysql.createPool({ 
+    host: process.env.DB_HOST, 
+    user: process.env.DB_USER, 
+    password: process.env.DB_PWD,
+    database: process.env.DB_NAME 
 });
 
 const query = async function (sql) {
-    logger.info("bdUtils --> pool:" + JSON.stringify(pool));
+    logger.info("bdUtils --> pool:" + pool);
     logger.info("bdUtils --> query() --> sql:" + sql);
-    let conn, rows;
     try {
-
-        conn = await pool.getConnection();
+        const promisePool = pool.promise();
+        logger.info("bdUtils --> query() --> connection");
+        const [rows] = await promisePool.query(sql);
+        logger.info("bdUtils --> query() --> connection execute SQL");
+        logger.info("bdUtils --> query() --> result: " + JSON.stringify(rows));
+        /*conn = await pool.connect();
         logger.info("bdUtils --> query() --> connection");
         rows = await conn.query(sql);
         logger.info("bdUtils --> query() --> connection execute SQL");
         //delete rows.meta;
-        logger.info("bdUtils --> query() --> result: " + JSON.stringify(rows));
+        logger.info("bdUtils --> query() --> result: " + JSON.stringify(rows));*/
         return rows;
     } catch (err) {
         console.log(err);
         throw err;
-    } finally {
-        if (conn) conn.end();
-    }
+    } 
 }
 
 const executeQuery = async function (sql) {
-    logger.info("bdUtils --> pool:" + JSON.stringify(pool));
+    logger.info("bdUtils --> pool:" + pool);
     logger.info("bdUtils --> executeQuery() --> sql:" + sql);
-    let conn, res;
     try {
-        conn = await pool.getConnection();
+        const promisePool = pool.promise();
+        logger.info("bdUtils --> executeQuery() --> connection");
+        const res = await promisePool.query(sql);
+        logger.info("bdUtils --> executeQuery() --> connection execute SQL");
+        logger.info("bdUtils --> executeQuery() --> result: " + JSON.stringify(res));
+        /*conn = await pool.connect();
         logger.info("bdUtils --> executeQuery() --> connection");
         res = await conn.query(sql);
         logger.info("bdUtils --> executeQuery() --> connection execute SQL");
         console.log(res); // { affectedRows: 1, insertId: 1, warningStatus: 0 }
-        logger.info("bdUtils --> executeQuery() --> result: " + JSON.stringify(res));
+        logger.info("bdUtils --> executeQuery() --> result: " + JSON.stringify(res));*/
         return res;
     } catch (err) {
         console.log(err);
         throw err;
-    } finally {
-        if (conn) conn.end();
     }
 }
 
