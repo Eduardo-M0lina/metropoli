@@ -14,15 +14,16 @@ const login = async function (data) {
             .replace(":document_type", data.document_type)
             .replace(":password", CryptoJS.MD5(data.password.toString())));
         //logger.info("userHandler --> login:" + SQL);
-        if (typeof user == 'undefined' && user.length == 0) {
-        user = await bdUtils.query(SQL.LOGING.replace(":document", data.document)
-            .replace(":document_type", data.document_type)
-            .replace(":password", CryptoJS.MD5(data.password.toString())));
-        //logger.info("userHandler --> user:" + JSON.stringify(user));
+        if (typeof user == 'undefined' || user.length == 0) {
+            user = await bdUtils.query(SQL.LOGING.replace(":document", data.document)
+                .replace(":document_type", data.document_type)
+                .replace(":password", CryptoJS.MD5(data.password.toString())));
+            //logger.info("userHandler --> user:" + JSON.stringify(user));
         }
         if (typeof user !== 'undefined' && user.length > 0) {
             if (user[0].status == 1) {
                 let module_options = await bdUtils.query(SQL.ROLES_OPTIONS.replace(":role_id", user[0].role_id));
+                logger.info("userHandler --> module_options:" + JSON.stringify(module_options));
                 user[0].modules = [];
                 let modulesAux = [];
                 module_options.forEach(element => {
@@ -67,6 +68,10 @@ const login = async function (data) {
         logger.error(err);
         throw new Error(err);
     }
+}
+
+function getUniqueListBy(arr, key) {
+    return [...new Map(arr.map(item => [item[key], item])).values()]
 }
 
 const create = async function (data) {
@@ -119,7 +124,7 @@ const update = async function (data) {
         );
         logger.info("userHandler --> user:" + JSON.stringify(user));
         if (typeof user !== 'undefined') {
-            logger.info("user[0].affectedRows:"+user[0].affectedRows);
+            logger.info("user[0].affectedRows:" + user[0].affectedRows);
             if (user[0].affectedRows > 0) {
                 res.status = true;
                 res.message = "OK";
@@ -226,5 +231,6 @@ module.exports = {
     create,
     update,
     updatePassword,
-    list
+    list,
+    listRoles
 };

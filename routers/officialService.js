@@ -90,4 +90,17 @@ router.get(baseUrl.concat("/list/:customer_id"), async (req, res) => {
     }
 });
 
+router.get(baseUrl.concat("/listRoles"), async (req, res) => {
+    logger.info("userService --> listRoles");
+    try {
+        let response;
+        response = await handler.listRoles();
+        logger.info("Respuesta:" + JSON.stringify(response));
+        return res.status(200).send(response);
+    } catch (e) {
+        logger.error("userService --> Error:" + e.message);
+        return res.status(500).send({ status: false, message: e.message });
+    }
+});
+
 module.exports = router;

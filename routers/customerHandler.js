@@ -60,7 +60,7 @@ const update = async function (data) {
         );
         logger.info("customerHandler --> customer:" + JSON.stringify(customer));
         if (typeof customer !== 'undefined') {
-            logger.info("customer[0].affectedRows:"+customer[0].affectedRows);
+            logger.info("customer[0].affectedRows:" + customer[0].affectedRows);
             if (customer[0].affectedRows > 0) {
                 res.status = true;
                 res.message = "OK";

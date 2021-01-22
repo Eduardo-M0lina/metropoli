@@ -224,11 +224,36 @@ const list = async function (data) {
     }
 }
 
+const listRoles = async function () {
+    logger.info("officialHandler --> listRoles()");
+    var res = new Object();
+    try {
+        //logger.info("officialHandler --> listRoles:" + SQL);
+        let role = await bdUtils.query(SQL.LIST_ROLES_OFFICIALS);
+        //logger.info("officialHandler --> official:" + JSON.stringify(official));
+        if (typeof role !== 'undefined' && role.length > 0) {
+            res.status = true;
+            res.message = "OK";
+            res.data = role;
+        } else {
+            res.status = false;
+            res.message = "No existen roles!"
+        }
+        //logger.info("officialHandler -->  official:" + JSON.stringify(official));
+        return res;
+    } catch (err) {
+        logger.error("officialHandler --> listRoles() --> Error!");
+        logger.error(err);
+        throw new Error(err);
+    }
+}
+
 module.exports = {
     test,
     login,
     create,
     update,
     updatePassword,
-    list
+    list,
+    listRoles
 };

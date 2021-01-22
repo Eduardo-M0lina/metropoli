@@ -26,6 +26,8 @@ const SQL = {
         `SELECT document, document_type, name, last_name, municipality, neighborhood, address, complement_address, phone1, phone2, email, role_id, status 
         FROM officials
         WHERE customer_id = ':customer_id'`,
+    LIST_ROLES_OFFICIALS:
+        `SELECT * FROM roles where id in (3,4,5,6)`,
     LIST_CUSTOMERS:
         `SELECT * FROM customers`,
     INSERT_CUSTOMER:
@@ -41,16 +43,18 @@ const SQL = {
         `INSERT INTO users (document, document_type, name, last_name, email, phone, password, role_id) 
         VALUES (':document', ':document_type', ':name', ':last_name', ':email', ':phone', ':password', ':role_id')`,
     UPDATE_USER:
-        `UPDATE users SET document=':document', document_type=':document_type', name=':name', last_name=':last_name', email=':email', phone=':phone', password=':password', role_id=':role_id', status=':status'  
-        WHERE  document=:document AND document_type=':document_type'`,
+        `UPDATE users SET name=':name', last_name=':last_name', email=':email', phone=':phone', password=':password', role_id=':role_id', status=':status'   
+        WHERE document=:document AND document_type=':document_type'`,
     LOGING_USER:
         `SELECT u.document, u.document_type, u.name, u.last_name, u.email, u.phone, u.password, u.role_id, r.name AS 'roleName', u.status ` +
         `FROM users u ` +
         `JOIN roles r ON r.id = u.role_id ` +
         `WHERE u.document = :document AND u.document_type = ':document_type' AND u.password = ':password' `,
     UPDATE_PASSWORD_USER:
-        `UPDATE officials SET password=':password'
-        WHERE  document=:document AND document_type=':document_type'`,
+        `UPDATE users SET password=':password' 
+        WHERE document=:document AND document_type=':document_type'`,
+    LIST_ROLES_USERS:
+        `SELECT * FROM roles where id in (2)`,
 }
 
 module.exports = {
