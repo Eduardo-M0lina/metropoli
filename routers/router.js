@@ -4,6 +4,7 @@ const router = express.Router();
 
 const officialService = require("./officialService");
 const customerService = require("./customerService");
+const userService = require("./userService");
 
 router.use((req, res, next) => {
   logger.info(`Called:  ${req.path}`);
@@ -14,5 +15,6 @@ router.use((req, res, next) => {
 
 router.use(officialService);
 router.use(customerService);
+router.use(userService);
 
 module.exports = router;
