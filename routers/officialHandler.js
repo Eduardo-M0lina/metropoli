@@ -4,92 +4,11 @@ const bdUtils = require("../config/bdUtils");
 const sqlConstant = require("../config/sqlConstants");
 const SQL = sqlConstant.SQL;
 
-const test = async function () {
-    logger.info("officialHandler --> test()");
-    var res = new Object();
-    try {
-        let result = await bdUtils.query("SELECT * FROM ROLES");
-        //logger.info("officialHandler --> result" + result);
-        res.status = true;
-        res.message = "OK";
-        res.data = result
-        return res;
-    } catch (err) {
-        logger.error("officialHandler --> test() --> Error!");
-        logger.error(err);
-        throw new Error(err);
-    }
-}
-
-const login = async function (data) {
-    logger.info("officialHandler --> login()");
-    var res = new Object();
-    try {
-        logger.info("officialHandler --> login MD5:" + CryptoJS.MD5(data.password.toString()));
-        let modules = [];
-        //logger.info("officialHandler --> login:" + SQL);
-        let official = await bdUtils.query(SQL.LOGING.replace(":document", data.document)
-            .replace(":document_type", data.document_type)
-            .replace(":password", CryptoJS.MD5(data.password.toString())));
-        //logger.info("officialHandler --> official:" + JSON.stringify(official));
-        if (typeof official !== 'undefined' && official.length > 0) {
-            if (official[0].status == 1) {
-                let module_options = await bdUtils.query(SQL.ROLES_OPTIONS.replace(":role_id", official[0].role_id));
-                official[0].modules = [];
-                let modulesAux = [];
-                module_options.forEach(element => {
-                    let module = new Object();
-                    module.id = element.module_id;
-                    module.name = element.module_name;
-                    module.options = [];
-                    //logger.info("officialHandler --> module:" + JSON.stringify(module));
-                    modulesAux.push(module);
-                });
-                modules = getUniqueListBy(modulesAux, 'id');
-                //logger.info("officialHandler --> modules:" + JSON.stringify(modules));
-                modules.forEach(module => {
-                    module_options.forEach(m_o => {
-                        if (m_o.module_id == module.id) {
-                            let option = new Object();
-                            option.id = m_o.option_id;
-                            option.name = m_o.option_name;
-                            module.options.push(option);
-                        }
-                    });
-                });
-                //logger.info("officialHandler --> modules:" + JSON.stringify(modules));
-                official[0].modules = modules;
-            } else {
-                res.status = false;
-                res.message = "El usuario se encuentra deshabilitado!"
-                return res;
-            }
-        } else {
-            res.status = false;
-            res.message = "Usuario / Contraseña Incorrectos!"
-            return res;
-        }
-        //logger.info("officialHandler -->  OFFICIAL:" + JSON.stringify(official));
-        res.status = true;
-        res.message = "OK";
-        res.data = official[0];
-        return res;
-    } catch (err) {
-        logger.error("officialHandler --> login() --> Error!");
-        logger.error(err);
-        throw new Error(err);
-    }
-}
-
-function getUniqueListBy(arr, key) {
-    return [...new Map(arr.map(item => [item[key], item])).values()]
-}
 
 const create = async function (data) {
     logger.info("officialHandler --> create()");
     var res = new Object();
     try {
-        //logger.info("officialHandler --> create:" + SQL);
         let official = await bdUtils.executeQuery(SQL.INSERT_OFFICIAL
             .replace(":document", data.document)
             .replace(":document_type", data.document_type)
@@ -113,8 +32,7 @@ const create = async function (data) {
             delete data.password;
             res.data = data;
         } else {
-            res.status = false;
-            res.message = "Error al crear funcionario!";
+            throw new Error("Error al crear funcionario!");
         }
         return res;
     } catch (err) {
@@ -128,7 +46,6 @@ const update = async function (data) {
     logger.info("officialHandler --> update()");
     var res = new Object();
     try {
-        //logger.info("officialHandler --> update:" + SQL);
         let official = await bdUtils.executeQuery(SQL.UPDATE_OFFICIAL
             .replace(":document", data.document)
             .replace(":document_type", data.document_type)
@@ -152,12 +69,10 @@ const update = async function (data) {
                 res.data = data;
             } else {
                 res.status = false;
-                res.message = "Funcionario no encontrado!";
+                throw new Error("Funcionario no encontrado!");
             }
-
         } else {
-            res.status = false;
-            res.message = "Error al actualizar funcionario!";
+            throw new Error("Error al actualizar funcionario!");
         }
         return res;
     } catch (err) {
@@ -171,7 +86,6 @@ const updatePassword = async function (data) {
     logger.info("officialHandler --> updatePassword()");
     var res = new Object();
     try {
-        //logger.info("officialHandler --> updatePassword:" + SQL);
         let official = await bdUtils.executeQuery(SQL.UPDATE_PASSWORD
             .replace(":document", data.document)
             .replace(":document_type", data.document_type)
@@ -184,12 +98,10 @@ const updatePassword = async function (data) {
                 res.message = "OK";
                 res.data = "Contraseña actualizada!";
             } else {
-                res.status = false;
-                res.message = "Funcionario no encontrado!";
+                throw new Error("Funcionario no encontrado!");
             }
         } else {
-            res.status = false;
-            res.message = "Error al actualizar contraseña!";
+            throw new Error("Error al actualizar contraseña!");
         }
         return res;
     } catch (err) {
@@ -203,19 +115,15 @@ const list = async function (data) {
     logger.info("officialHandler --> list()");
     var res = new Object();
     try {
-        //logger.info("officialHandler --> list:" + SQL);
         let official = await bdUtils.query(SQL.LIST_OFFICIALS
             .replace(":customer_id", data.customer_id));
-        //logger.info("officialHandler --> official:" + JSON.stringify(official));
         if (typeof official !== 'undefined' && official.length > 0) {
             res.status = true;
             res.message = "OK";
             res.data = official;
         } else {
-            res.status = false;
-            res.message = "No existen funcionarios!"
+            throw new Error("No existen funcionarios!");
         }
-        //logger.info("officialHandler -->  OFFICIAL:" + JSON.stringify(official));
         return res;
     } catch (err) {
         logger.error("officialHandler --> list() --> Error!");
@@ -228,18 +136,14 @@ const listRoles = async function () {
     logger.info("officialHandler --> listRoles()");
     var res = new Object();
     try {
-        //logger.info("officialHandler --> listRoles:" + SQL);
         let role = await bdUtils.query(SQL.LIST_ROLES_OFFICIALS);
-        //logger.info("officialHandler --> official:" + JSON.stringify(official));
         if (typeof role !== 'undefined' && role.length > 0) {
             res.status = true;
             res.message = "OK";
             res.data = role;
         } else {
-            res.status = false;
-            res.message = "No existen roles!"
+            throw new Error("No existen roles!");
         }
-        //logger.info("officialHandler -->  official:" + JSON.stringify(official));
         return res;
     } catch (err) {
         logger.error("officialHandler --> listRoles() --> Error!");
@@ -248,12 +152,31 @@ const listRoles = async function () {
     }
 }
 
+const listAll = async function (data) {
+    logger.info("officialHandler --> listAll()");
+    var res = new Object();
+    try {
+        let official = await bdUtils.query(SQL.LIST_ALL_OFFICIALS);
+        if (typeof official !== 'undefined' && official.length > 0) {
+            res.status = true;
+            res.message = "OK";
+            res.data = official;
+        } else {
+            throw new Error("No existen funcionarios!");
+        }
+        return res;
+    } catch (err) {
+        logger.error("officialHandler --> list() --> Error!");
+        logger.error(err);
+        throw new Error(err);
+    }
+}
+
 module.exports = {
-    test,
-    login,
     create,
     update,
     updatePassword,
     list,
-    listRoles
+    listRoles,
+    listAll
 };

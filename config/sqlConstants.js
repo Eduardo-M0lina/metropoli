@@ -23,13 +23,14 @@ const SQL = {
         `UPDATE officials SET password=':password'
         WHERE  document=:document AND document_type=':document_type'`,
     LIST_OFFICIALS:
-        `SELECT document, document_type, name, last_name, municipality, neighborhood, address, complement_address, phone1, phone2, email, role_id, status 
-        FROM officials
-        WHERE customer_id = ':customer_id'`,
+        `SELECT document, document_type, o.name, last_name, municipality, neighborhood, address, complement_address, phone1, phone2, email, role_id, status, r.name AS 'roleName'
+        FROM officials o
+        JOIN roles r ON r.id = o.role_id
+        WHERE customer_id = ':customer_id' ORDER BY o.status DESC`,
     LIST_ROLES_OFFICIALS:
         `SELECT * FROM roles where id in (3,4,5,6)`,
     LIST_CUSTOMERS:
-        `SELECT * FROM customers`,
+        `SELECT * FROM customers ORDER BY status DESC`,
     INSERT_CUSTOMER:
         `INSERT INTO customers (document, document_type, business_name, deparment, municipality, address, complement_address, email, phone1, phone2) 
         VALUES (':document', ':document_type', ':business_name', ':department', ':municipality', ':address', ':complement_address', ':email', ':phone1', ':phone2')`,
@@ -38,7 +39,7 @@ const SQL = {
                 address=':address', complement_address=':complement_address', email=':email', phone1=':phone1', phone2=':phone2', status=':status' 
         WHERE  id=:id`,
     LIST_USERS:
-        `SELECT * FROM users`,
+        `SELECT * FROM users ORDER BY status DESC`,
     INSERT_USER:
         `INSERT INTO users (document, document_type, name, last_name, email, phone, password, role_id) 
         VALUES (':document', ':document_type', ':name', ':last_name', ':email', ':phone', ':password', ':role_id')`,
@@ -55,6 +56,10 @@ const SQL = {
         WHERE document=:document AND document_type=':document_type'`,
     LIST_ROLES_USERS:
         `SELECT * FROM roles where id in (2)`,
+    LIST_ALL_OFFICIALS:
+        `SELECT o.*, c.business_name FROM officials o
+        JOIN customers c ON o.customer_id = c.id
+        ORDER BY o.status DESC`,
 }
 
 module.exports = {

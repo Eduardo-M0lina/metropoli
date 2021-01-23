@@ -6,32 +6,6 @@ const router = express.Router();
 
 const baseUrl = '/official';
 
-router.get(baseUrl.concat("/test"), async (req, res) => {
-    logger.info("officialService --> test");
-    try {
-        let response;
-        response = await handler.test();
-        return res.status(200).send(response);
-    } catch (e) {
-        logger.error("officialService --> Error:" + e.message);
-        return res.status(500).send({ status: false, message: e.message });
-    }
-});
-
-router.post(baseUrl.concat("/login"), async (req, res) => {
-    logger.info("officialService --> login");
-    try {
-        let data = req.body;
-        let response;
-        response = await handler.login(data);
-        logger.info("Respuesta:" + JSON.stringify(response));
-        return res.status(200).send(response);
-    } catch (e) {
-        logger.error("officialService --> Error:" + e.message);
-        return res.status(500).send({ status: false, message: e.message });
-    }
-});
-
 router.post(baseUrl.concat("/create"), async (req, res) => {
     logger.info("officialService --> create");
     try {
@@ -52,20 +26,6 @@ router.post(baseUrl.concat("/update"), async (req, res) => {
         let data = req.body;
         let response;
         response = await handler.update(data);
-        logger.info("Respuesta:" + JSON.stringify(response));
-        return res.status(200).send(response);
-    } catch (e) {
-        logger.error("officialService --> Error:" + e.message);
-        return res.status(500).send({ status: false, message: e.message });
-    }
-});
-
-router.post(baseUrl.concat("/updatePassword"), async (req, res) => {
-    logger.info("officialService --> updatePassword");
-    try {
-        let data = req.body;
-        let response;
-        response = await handler.updatePassword(data);
         logger.info("Respuesta:" + JSON.stringify(response));
         return res.status(200).send(response);
     } catch (e) {
@@ -99,6 +59,19 @@ router.get(baseUrl.concat("/listRoles"), async (req, res) => {
         return res.status(200).send(response);
     } catch (e) {
         logger.error("userService --> Error:" + e.message);
+        return res.status(500).send({ status: false, message: e.message });
+    }
+});
+
+router.get(baseUrl.concat("/listAll"), async (req, res) => {
+    logger.info("officialService --> listAll");
+    try {
+        let response;
+        response = await handler.listAll();
+        logger.info("Respuesta:" + JSON.stringify(response));
+        return res.status(200).send(response);
+    } catch (e) {
+        logger.error("officialService --> Error:" + e.message);
         return res.status(500).send({ status: false, message: e.message });
     }
 });

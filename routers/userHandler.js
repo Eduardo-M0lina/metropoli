@@ -13,12 +13,11 @@ const login = async function (data) {
         let user = await bdUtils.query(SQL.LOGING_USER.replace(":document", data.document)
             .replace(":document_type", data.document_type)
             .replace(":password", CryptoJS.MD5(data.password.toString())));
-        //logger.info("userHandler --> login:" + SQL);
+
         if (typeof user == 'undefined' || user.length == 0) {
             user = await bdUtils.query(SQL.LOGING.replace(":document", data.document)
                 .replace(":document_type", data.document_type)
                 .replace(":password", CryptoJS.MD5(data.password.toString())));
-            //logger.info("userHandler --> user:" + JSON.stringify(user));
         }
         if (typeof user !== 'undefined' && user.length > 0) {
             if (user[0].status == 1) {
@@ -49,14 +48,10 @@ const login = async function (data) {
                 //logger.info("userHandler --> modules:" + JSON.stringify(modules));
                 user[0].modules = modules;
             } else {
-                res.status = false;
-                res.message = "El usuario se encuentra deshabilitado!"
-                return res;
+                throw new Error("El usuario se encuentra deshabilitado!");
             }
         } else {
-            res.status = false;
-            res.message = "Usuario / Contraseña Incorrectos!"
-            return res;
+            throw new Error("Usuario / Contraseña Incorrectos!");
         }
         //logger.info("userHandler -->  user:" + JSON.stringify(user));
         res.status = true;
@@ -78,7 +73,6 @@ const create = async function (data) {
     logger.info("userHandler --> create()");
     var res = new Object();
     try {
-        //logger.info("userHandler --> create:" + SQL);
         let user = await bdUtils.executeQuery(SQL.INSERT_USER
             .replace(":document", data.document)
             .replace(":document_type", data.document_type)
@@ -95,8 +89,7 @@ const create = async function (data) {
             res.message = "OK";
             res.data = data;
         } else {
-            res.status = false;
-            res.message = "Error al crear cliente!";
+            throw new Error("Error al crear cliente!");
         }
         return res;
     } catch (err) {
@@ -110,7 +103,6 @@ const update = async function (data) {
     logger.info("userHandler --> update()");
     var res = new Object();
     try {
-        //logger.info("userHandler --> update:" + SQL);
         let user = await bdUtils.executeQuery(SQL.UPDATE_USER
             .replace(":document", data.document)
             .replace(":document_type", data.document_type)
@@ -130,13 +122,11 @@ const update = async function (data) {
                 res.message = "OK";
                 res.data = data;
             } else {
-                res.status = false;
-                res.message = "Usuario no encontrado!";
+                throw new Error("Usuario no encontrado!");
             }
 
         } else {
-            res.status = false;
-            res.message = "Error al actualizar usuario!";
+            throw new Error("Error al actualizar usuario!");
         }
         return res;
     } catch (err) {
@@ -150,12 +140,20 @@ const updatePassword = async function (data) {
     logger.info("userHandler --> updatePassword()");
     var res = new Object();
     try {
-        //logger.info("userHandler --> updatePassword:" + SQL);
         let user = await bdUtils.executeQuery(SQL.UPDATE_PASSWORD_USER
             .replace(":document", data.document)
             .replace(":document_type", data.document_type)
             .replace(":password", CryptoJS.MD5(data.password.toString()))
         );
+        if (typeof user !== 'undefined') {
+            if (user[0].affectedRows == 0) {
+                user = await bdUtils.executeQuery(SQL.UPDATE_PASSWORD
+                    .replace(":document", data.document)
+                    .replace(":document_type", data.document_type)
+                    .replace(":password", CryptoJS.MD5(data.password.toString()))
+                );
+            }
+        }
         logger.info("userHandler --> user:" + JSON.stringify(user));
         if (typeof user !== 'undefined') {
             if (user[0].affectedRows > 0) {
@@ -163,12 +161,10 @@ const updatePassword = async function (data) {
                 res.message = "OK";
                 res.data = "Contraseña actualizada!";
             } else {
-                res.status = false;
-                res.message = "Usuario no encontrado!";
+                throw new Error("Usuario no encontrado!");
             }
         } else {
-            res.status = false;
-            res.message = "Error al actualizar contraseña!";
+            throw new Error("Error al actualizar contraseña!");
         }
         return res;
     } catch (err) {
@@ -182,18 +178,14 @@ const list = async function () {
     logger.info("userHandler --> list()");
     var res = new Object();
     try {
-        //logger.info("userHandler --> list:" + SQL);
         let user = await bdUtils.query(SQL.LIST_USERS);
-        //logger.info("userHandler --> user:" + JSON.stringify(user));
         if (typeof user !== 'undefined' && user.length > 0) {
             res.status = true;
             res.message = "OK";
             res.data = user;
         } else {
-            res.status = false;
-            res.message = "No existen usuarios!"
+            throw new Error("No existen usuarios!");
         }
-        //logger.info("userHandler -->  user:" + JSON.stringify(user));
         return res;
     } catch (err) {
         logger.error("userHandler --> list() --> Error!");
@@ -206,18 +198,14 @@ const listRoles = async function () {
     logger.info("userHandler --> listRoles()");
     var res = new Object();
     try {
-        //logger.info("userHandler --> listRoles:" + SQL);
         let user = await bdUtils.query(SQL.LIST_ROLES_USERS);
-        //logger.info("userHandler --> user:" + JSON.stringify(user));
         if (typeof user !== 'undefined' && user.length > 0) {
             res.status = true;
             res.message = "OK";
             res.data = user;
         } else {
-            res.status = false;
-            res.message = "No existen roles!"
+            throw new Error("No existen roles!");
         }
-        //logger.info("userHandler -->  user:" + JSON.stringify(user));
         return res;
     } catch (err) {
         logger.error("userHandler --> listRoles() --> Error!");

@@ -7,7 +7,6 @@ const create = async function (data) {
     logger.info("customerHandler --> create()");
     var res = new Object();
     try {
-        //logger.info("customerHandler --> create:" + SQL);
         let customer = await bdUtils.executeQuery(SQL.INSERT_CUSTOMER
             .replace(":document", data.document)
             .replace(":document_type", data.document_type)
@@ -27,8 +26,7 @@ const create = async function (data) {
             res.message = "OK";
             res.data = data;
         } else {
-            res.status = false;
-            res.message = "Error al crear cliente!";
+            throw new Error("Error al crear cliente!");
         }
         return res;
     } catch (err) {
@@ -42,7 +40,6 @@ const update = async function (data) {
     logger.info("customerHandler --> update()");
     var res = new Object();
     try {
-        //logger.info("customerHandler --> update:" + SQL);
         let customer = await bdUtils.executeQuery(SQL.UPDATE_CUSTOMER
             .replace(":id", data.id)
             .replace(":document", data.document)
@@ -66,13 +63,10 @@ const update = async function (data) {
                 res.message = "OK";
                 res.data = data;
             } else {
-                res.status = false;
-                res.message = "Funcionario no encontrado!";
+                throw new Error("Funcionario no encontrado!");
             }
-
         } else {
-            res.status = false;
-            res.message = "Error al actualizar funcionario!";
+            throw new Error("Error al actualizar funcionario!");
         }
         return res;
     } catch (err) {
@@ -86,18 +80,14 @@ const list = async function (data) {
     logger.info("customerHandler --> list()");
     var res = new Object();
     try {
-        //logger.info("customerHandler --> list:" + SQL);
         let customer = await bdUtils.query(SQL.LIST_CUSTOMERS);
-        //logger.info("customerHandler --> customer:" + JSON.stringify(customer));
         if (typeof customer !== 'undefined' && customer.length > 0) {
             res.status = true;
             res.message = "OK";
             res.data = customer;
         } else {
-            res.status = false;
-            res.message = "No existen clientes!"
+            throw new Error("No existen clientes!");
         }
-        //logger.info("customerHandler -->  customer:" + JSON.stringify(customer));
         return res;
     } catch (err) {
         logger.error("customerHandler --> list() --> Error!");
