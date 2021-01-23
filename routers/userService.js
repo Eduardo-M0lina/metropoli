@@ -3,7 +3,6 @@ const logger = require("../config/loggerUtil");
 const handler = require("./userHandler");
 
 const router = express.Router();
-
 const baseUrl = '/user';
 
 router.post(baseUrl.concat("/login"), async (req, res) => {

@@ -32,10 +32,10 @@ const SQL = {
     LIST_CUSTOMERS:
         `SELECT * FROM customers ORDER BY status DESC`,
     INSERT_CUSTOMER:
-        `INSERT INTO customers (document, document_type, business_name, deparment, municipality, address, complement_address, email, phone1, phone2) 
+        `INSERT INTO customers (document, document_type, business_name, department, municipality, address, complement_address, email, phone1, phone2) 
         VALUES (':document', ':document_type', ':business_name', ':department', ':municipality', ':address', ':complement_address', ':email', ':phone1', ':phone2')`,
     UPDATE_CUSTOMER:
-        `UPDATE customers SET document=':document', document_type=':document_type', business_name=':business_name', deparment=':deparment', municipality=':municipality', 
+        `UPDATE customers SET document=':document', document_type=':document_type', business_name=':business_name', department=':department', municipality=':municipality', 
                 address=':address', complement_address=':complement_address', email=':email', phone1=':phone1', phone2=':phone2', status=':status' 
         WHERE  id=:id`,
     LIST_USERS:
@@ -60,6 +60,21 @@ const SQL = {
         `SELECT o.*, c.business_name FROM officials o
         JOIN customers c ON o.customer_id = c.id
         ORDER BY o.status DESC`,
+    INSERT_PQR:
+        `INSERT INTO pqr (customer_id, create_document, create_document_type, description, location, create_date) 
+        VALUES (':customer_id', ':create_document', ':create_document_type', ':description', ':location', SYSDATE())`,
+    UPDATE_PQR:
+        `UPDATE pqr SET status='0', update_document=':update_document', update_document_type=':update_document_type', observation=':observation', update_date=SYSDATE() 
+        WHERE  id=:id`,
+    LIST_PQRS:
+        `SELECT  pqr.id,  pqr.customer_id, c.business_name,  pqr.create_document,  pqr.create_document_type, o1.name AS create_name, o1.last_name AS create_last_name, o1.phone1 AS create_phone1,  
+		pqr.description,  pqr.location,  pqr.create_date,  pqr.status,  pqr.update_document,  pqr.update_document_type,  
+		o2.name AS update_name, o2.last_name AS update_last_name, o2.phone1 AS update_phone1,  pqr.observation, pqr.update_date 
+        FROM pqr pqr
+        JOIN customers c on c.id = pqr.customer_id
+        LEFT JOIN officials o1 ON o1.document = pqr.create_document AND o1.document_type = pqr.create_document_type
+        LEFT JOIN officials o2 ON o2.document = pqr.update_document AND o2.document_type = pqr.update_document_type
+        ORDER BY STATUS DESC`,
 }
 
 module.exports = {
