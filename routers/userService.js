@@ -11,7 +11,6 @@ router.post(baseUrl.concat("/login"), async (req, res) => {
         let data = req.body;
         let response;
         response = await handler.login(data);
-        logger.info("Respuesta:" + JSON.stringify(response));
         return res.status(200).send(response);
     } catch (e) {
         logger.error("userService --> Error:" + e.message);
@@ -25,7 +24,6 @@ router.post(baseUrl.concat("/create"), async (req, res) => {
         let data = req.body;
         let response;
         response = await handler.create(data);
-        logger.info("Respuesta:" + JSON.stringify(response));
         return res.status(200).send(response);
     } catch (e) {
         logger.error("userService --> Error:" + e.message);
@@ -39,7 +37,6 @@ router.post(baseUrl.concat("/update"), async (req, res) => {
         let data = req.body;
         let response;
         response = await handler.update(data);
-        logger.info("Respuesta:" + JSON.stringify(response));
         return res.status(200).send(response);
     } catch (e) {
         logger.error("userService --> Error:" + e.message);
@@ -53,7 +50,6 @@ router.post(baseUrl.concat("/updatePassword"), async (req, res) => {
         let data = req.body;
         let response;
         response = await handler.updatePassword(data);
-        logger.info("Respuesta:" + JSON.stringify(response));
         return res.status(200).send(response);
     } catch (e) {
         logger.error("userService --> Error:" + e.message);
@@ -66,7 +62,6 @@ router.get(baseUrl.concat("/list"), async (req, res) => {
     try {
         let response;
         response = await handler.list();
-        logger.info("Respuesta:" + JSON.stringify(response));
         return res.status(200).send(response);
     } catch (e) {
         logger.error("userService --> Error:" + e.message);
@@ -79,7 +74,6 @@ router.get(baseUrl.concat("/listRoles"), async (req, res) => {
     try {
         let response;
         response = await handler.listRoles();
-        logger.info("Respuesta:" + JSON.stringify(response));
         return res.status(200).send(response);
     } catch (e) {
         logger.error("userService --> Error:" + e.message);

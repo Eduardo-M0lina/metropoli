@@ -65,13 +65,14 @@ const list = async function (data) {
     logger.info("pqrHandler --> list()");
     var res = new Object();
     try {
-        let pqr = await bdUtils.query(SQL.LIST_PQRS);
+        let pqr = await bdUtils.query(SQL.LIST_PQRS
+            .replace(":customer_id", data.customer_id));
         if (typeof pqr !== 'undefined' && pqr.length > 0) {
             res.status = true;
             res.message = "OK";
             res.data = pqr;
         } else {
-            throw new Error("No existen solicitudes PQR!");
+            throw new Error("No existen pqrs!");
         }
         return res;
     } catch (err) {
@@ -81,8 +82,53 @@ const list = async function (data) {
     }
 }
 
+const listAll = async function (data) {
+    logger.info("pqrHandler --> listAll()");
+    var res = new Object();
+    try {
+        let pqr = await bdUtils.query(SQL.LIST_ALL_PQRS);
+        if (typeof pqr !== 'undefined' && pqr.length > 0) {
+            res.status = true;
+            res.message = "OK";
+            res.data = pqr;
+        } else {
+            throw new Error("No existen pqrs!");
+        }
+        return res;
+    } catch (err) {
+        logger.error("pqrHandler --> list() --> Error!");
+        logger.error(err);
+        throw new Error(err);
+    }
+}
+
+const listByCreator = async function (data) {
+    logger.info("pqrHandler --> listByCreator()");
+    var res = new Object();
+    try {
+        let pqr = await bdUtils.query(SQL.LIST_PQRS_BY_CREATOR
+            .replace(":customer_id", data.customer_id)
+            .replace(":create_document", data.document)
+            .replace(":create_document_type", data.document_type));
+        if (typeof pqr !== 'undefined' && pqr.length > 0) {
+            res.status = true;
+            res.message = "OK";
+            res.data = pqr;
+        } else {
+            throw new Error("No existen pqrs creadas por este usuario!");
+        }
+        return res;
+    } catch (err) {
+        logger.error("pqrHandler --> listByCreator() --> Error!");
+        logger.error(err);
+        throw new Error(err);
+    }
+}
+
 module.exports = {
     create,
     update,
-    list
+    list,
+    listAll,
+    listByCreator
 };

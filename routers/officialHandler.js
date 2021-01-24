@@ -152,7 +152,7 @@ const listRoles = async function () {
     }
 }
 
-const listAll = async function (data) {
+const listAll = async function () {
     logger.info("officialHandler --> listAll()");
     var res = new Object();
     try {

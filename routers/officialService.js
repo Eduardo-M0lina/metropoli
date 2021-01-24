@@ -12,7 +12,6 @@ router.post(baseUrl.concat("/create"), async (req, res) => {
         let data = req.body;
         let response;
         response = await handler.create(data);
-        logger.info("Respuesta:" + JSON.stringify(response));
         return res.status(200).send(response);
     } catch (e) {
         logger.error("officialService --> Error:" + e.message);
@@ -26,7 +25,6 @@ router.post(baseUrl.concat("/update"), async (req, res) => {
         let data = req.body;
         let response;
         response = await handler.update(data);
-        logger.info("Respuesta:" + JSON.stringify(response));
         return res.status(200).send(response);
     } catch (e) {
         logger.error("officialService --> Error:" + e.message);
@@ -42,7 +40,6 @@ router.get(baseUrl.concat("/list/:customer_id"), async (req, res) => {
         if (typeof req.params.customer_id !== 'undefined') data.customer_id = req.params.customer_id;
         logger.info("officialHandler --> list + data:" + data);
         response = await handler.list(data);
-        logger.info("Respuesta:" + JSON.stringify(response));
         return res.status(200).send(response);
     } catch (e) {
         logger.error("officialService --> Error:" + e.message);
@@ -55,7 +52,6 @@ router.get(baseUrl.concat("/listRoles"), async (req, res) => {
     try {
         let response;
         response = await handler.listRoles();
-        logger.info("Respuesta:" + JSON.stringify(response));
         return res.status(200).send(response);
     } catch (e) {
         logger.error("userService --> Error:" + e.message);
@@ -68,7 +64,6 @@ router.get(baseUrl.concat("/listAll"), async (req, res) => {
     try {
         let response;
         response = await handler.listAll();
-        logger.info("Respuesta:" + JSON.stringify(response));
         return res.status(200).send(response);
     } catch (e) {
         logger.error("officialService --> Error:" + e.message);
