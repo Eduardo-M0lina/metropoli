@@ -39,7 +39,10 @@ const SQL = {
                 address=':address', complement_address=':complement_address', email=':email', phone1=':phone1', phone2=':phone2', status=':status' 
         WHERE  id=:id`,
     LIST_USERS:
-        `SELECT * FROM users ORDER BY status DESC`,
+        `SELECT u.*, r.name AS 'roleName'
+        FROM users u
+        JOIN roles r ON r.id = u.role_id
+        ORDER BY status DESC`,
     INSERT_USER:
         `INSERT INTO users (document, document_type, name, last_name, email, phone, password, role_id) 
         VALUES (':document', ':document_type', ':name', ':last_name', ':email', ':phone', ':password', ':role_id')`,
@@ -66,15 +69,63 @@ const SQL = {
     UPDATE_PQR:
         `UPDATE pqr SET status='0', update_document=':update_document', update_document_type=':update_document_type', observation=':observation', update_date=SYSDATE() 
         WHERE  id=:id`,
-    LIST_PQRS:
-        `SELECT  pqr.id,  pqr.customer_id, c.business_name,  pqr.create_document,  pqr.create_document_type, o1.name AS create_name, o1.last_name AS create_last_name, o1.phone1 AS create_phone1,  
-		pqr.description,  pqr.location,  pqr.create_date,  pqr.status,  pqr.update_document,  pqr.update_document_type,  
-		o2.name AS update_name, o2.last_name AS update_last_name, o2.phone1 AS update_phone1,  pqr.observation, pqr.update_date 
+    LIST_ALL_PQRS:
+        `SELECT  pqr.id,  pqr.customer_id, c.business_name,  
+        pqr.create_document,  pqr.create_document_type, o1.name AS create_name, o1.last_name AS create_last_name, o1.phone1 AS create_phone1, r.name AS create_roleName, 
+        pqr.description,  pqr.location,  pqr.create_date,  pqr.status,  
+        pqr.update_document,  pqr.update_document_type, o2.name AS update_name, o2.last_name AS update_last_name, o2.phone1 AS update_phone1,  r2.name AS update_roleName, 
+        pqr.observation, pqr.update_date 
         FROM pqr pqr
         JOIN customers c on c.id = pqr.customer_id
-        LEFT JOIN officials o1 ON o1.document = pqr.create_document AND o1.document_type = pqr.create_document_type
+        JOIN officials o1 ON o1.document = pqr.create_document AND o1.document_type = pqr.create_document_type
         LEFT JOIN officials o2 ON o2.document = pqr.update_document AND o2.document_type = pqr.update_document_type
+        JOIN roles r ON r.id = o1.role_id 
+        LEFT JOIN roles r2 ON r2.id = o2.role_id 
         ORDER BY STATUS DESC`,
+    LIST_PQRS:
+        `SELECT  pqr.id,  pqr.customer_id, c.business_name,  
+        pqr.create_document,  pqr.create_document_type, o1.name AS create_name, o1.last_name AS create_last_name, o1.phone1 AS create_phone1, r.name AS create_roleName, 
+        pqr.description,  pqr.location,  pqr.create_date,  pqr.status,  
+        pqr.update_document,  pqr.update_document_type, o2.name AS update_name, o2.last_name AS update_last_name, o2.phone1 AS update_phone1,  r2.name AS update_roleName, 
+        pqr.observation, pqr.update_date 
+        FROM pqr pqr
+        JOIN customers c on c.id = pqr.customer_id
+        JOIN officials o1 ON o1.document = pqr.create_document AND o1.document_type = pqr.create_document_type
+        LEFT JOIN officials o2 ON o2.document = pqr.update_document AND o2.document_type = pqr.update_document_type
+        JOIN roles r ON r.id = o1.role_id 
+        LEFT JOIN roles r2 ON r2.id = o2.role_id 
+        WHERE pqr.customer_id = ':customer_id'
+        ORDER BY STATUS DESC`,
+    LIST_PQRS_BY_CREATOR:
+        `SELECT  pqr.id,  pqr.customer_id, c.business_name,  
+        pqr.create_document,  pqr.create_document_type, o1.name AS create_name, o1.last_name AS create_last_name, o1.phone1 AS create_phone1, r.name AS create_roleName, 
+        pqr.description,  pqr.location,  pqr.create_date,  pqr.status,  
+        pqr.update_document,  pqr.update_document_type, o2.name AS update_name, o2.last_name AS update_last_name, o2.phone1 AS update_phone1,  r2.name AS update_roleName, 
+        pqr.observation, pqr.update_date 
+        FROM pqr pqr
+        JOIN customers c on c.id = pqr.customer_id
+        JOIN officials o1 ON o1.document = pqr.create_document AND o1.document_type = pqr.create_document_type
+        LEFT JOIN officials o2 ON o2.document = pqr.update_document AND o2.document_type = pqr.update_document_type
+        JOIN roles r ON r.id = o1.role_id 
+        LEFT JOIN roles r2 ON r2.id = o2.role_id 
+        WHERE pqr.customer_id = ':customer_id' AND pqr.create_document = :create_document AND pqr.create_document_type = ':create_document_type'
+        ORDER BY STATUS DESC`,
+    INSERT_INVENTORY:
+        `INSERT INTO inventory (name, description, location, zone, provider, buy_date, value, observation, customer_id) 
+        VALUES (':name', ':description', ':location', ':zone', ':provider', ':buy_date', ':value', ':observation', ':customer_id')`,
+    UPDATE_INVENTORY:
+        `UPDATE inventory SET name=':name', description=':description', location=':location ', zone=':zone ', provider=':provider', buy_date=':buy_date', value=':value', observation=':observation', status=':status' 
+        WHERE  id=:id`,
+    LIST_INVENTORY:
+        `SELECT i.*
+        FROM inventory i
+        WHERE customer_id = ':customer_id' ORDER BY i.status DESC`,
+    LIST_ALL_INVENTORY:
+        `SELECT i.*, c.business_name
+        FROM inventory i
+        JOIN customers c on c.id = i.customer_id
+        ORDER BY i.status DESC`,
+
 }
 
 module.exports = {
