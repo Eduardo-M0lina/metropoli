@@ -32,6 +32,19 @@ router.post(baseUrl.concat("/update"), async (req, res) => {
     }
 });
 
+router.post(baseUrl.concat("/closePqr"), async (req, res) => {
+    logger.info("pqrService --> closePqr");
+    try {
+        let data = req.body;
+        let response;
+        response = await handler.closePqr(data);
+        return res.status(200).send(response);
+    } catch (e) {
+        logger.error("pqrService --> Error:" + e.message);
+        return res.status(500).send({ status: false, message: e.message });
+    }
+});
+
 router.get(baseUrl.concat("/list/:customer_id"), async (req, res) => {
     logger.info("pqrService --> list");
     try {

@@ -67,6 +67,9 @@ const SQL = {
         `INSERT INTO pqr (customer_id, type, create_document, create_document_type, description, location, create_date) 
         VALUES (':customer_id', ':type', ':create_document', ':create_document_type', ':description', ':location', SYSDATE())`,
     UPDATE_PQR:
+        `UPDATE pqr SET type=':type', description=':description', location=':location', status=':status' 
+        WHERE  id=:id`,
+    CLOSE_PQR:
         `UPDATE pqr SET status=':status', type=':type',update_document=':update_document', update_document_type=':update_document_type', observation=':observation', update_date=SYSDATE() 
         WHERE  id=:id`,
     LIST_ALL_PQRS:

@@ -38,6 +38,38 @@ const update = async function (data) {
         let pqr = await bdUtils.executeQuery(SQL.UPDATE_PQR
             .replace(":id", data.id)
             .replace(":type", data.type)
+            .replace(":description", data.description)
+            .replace(":location", data.location)
+            .replace(":status", data.status)
+        );
+        logger.info("pqrHandler --> pqr:" + JSON.stringify(pqr));
+        if (typeof pqr !== 'undefined') {
+            logger.info("pqr[0].affectedRows:" + pqr[0].affectedRows);
+            if (pqr[0].affectedRows > 0) {
+                res.status = true;
+                res.message = "OK";
+                res.data = data;
+            } else {
+                throw new Error("solicitud PQR no encontrado!");
+            }
+        } else {
+            throw new Error("Error al actualizar solicitud PQR!");
+        }
+        return res;
+    } catch (err) {
+        logger.error("pqrHandler --> update() --> Error!");
+        logger.error(err);
+        throw new Error(err);
+    }
+}
+
+const closePqr = async function (data) {
+    logger.info("pqrHandler --> closePqr()");
+    var res = new Object();
+    try {
+        let pqr = await bdUtils.executeQuery(SQL.CLOSE_PQR
+            .replace(":id", data.id)
+            .replace(":type", data.type)
             .replace(":update_document", data.update_document)
             .replace(":update_document_type", data.update_document_type)
             .replace(":observation", data.observation)
@@ -58,7 +90,7 @@ const update = async function (data) {
         }
         return res;
     } catch (err) {
-        logger.error("pqrHandler --> update() --> Error!");
+        logger.error("pqrHandler --> closePqr() --> Error!");
         logger.error(err);
         throw new Error(err);
     }
@@ -125,6 +157,7 @@ const listByCreator = async function (data) {
 module.exports = {
     create,
     update,
+    closePqr,
     list,
     listAll,
     listByCreator
