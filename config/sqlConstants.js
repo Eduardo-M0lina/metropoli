@@ -64,13 +64,13 @@ const SQL = {
         JOIN customers c ON o.customer_id = c.id
         ORDER BY o.status DESC`,
     INSERT_PQR:
-        `INSERT INTO pqr (customer_id, create_document, create_document_type, description, location, create_date) 
-        VALUES (':customer_id', ':create_document', ':create_document_type', ':description', ':location', SYSDATE())`,
+        `INSERT INTO pqr (customer_id, type, create_document, create_document_type, description, location, create_date) 
+        VALUES (':customer_id', ':type', ':create_document', ':create_document_type', ':description', ':location', SYSDATE())`,
     UPDATE_PQR:
-        `UPDATE pqr SET status='0', update_document=':update_document', update_document_type=':update_document_type', observation=':observation', update_date=SYSDATE() 
+        `UPDATE pqr SET status=':status', type=':type',update_document=':update_document', update_document_type=':update_document_type', observation=':observation', update_date=SYSDATE() 
         WHERE  id=:id`,
     LIST_ALL_PQRS:
-        `SELECT  pqr.id,  pqr.customer_id, c.business_name,  
+        `SELECT  pqr.id,  pqr.type, pqr.customer_id, c.business_name,  
         pqr.create_document,  pqr.create_document_type, o1.name AS create_name, o1.last_name AS create_last_name, o1.phone1 AS create_phone1, r.name AS create_roleName, 
         pqr.description,  pqr.location,  pqr.create_date,  pqr.status,  
         pqr.update_document,  pqr.update_document_type, o2.name AS update_name, o2.last_name AS update_last_name, o2.phone1 AS update_phone1,  r2.name AS update_roleName, 
@@ -83,7 +83,7 @@ const SQL = {
         LEFT JOIN roles r2 ON r2.id = o2.role_id 
         ORDER BY STATUS DESC`,
     LIST_PQRS:
-        `SELECT  pqr.id,  pqr.customer_id, c.business_name,  
+        `SELECT  pqr.id, pqr.type, pqr.customer_id, c.business_name,  
         pqr.create_document,  pqr.create_document_type, o1.name AS create_name, o1.last_name AS create_last_name, o1.phone1 AS create_phone1, r.name AS create_roleName, 
         pqr.description,  pqr.location,  pqr.create_date,  pqr.status,  
         pqr.update_document,  pqr.update_document_type, o2.name AS update_name, o2.last_name AS update_last_name, o2.phone1 AS update_phone1,  r2.name AS update_roleName, 
@@ -97,7 +97,7 @@ const SQL = {
         WHERE pqr.customer_id = ':customer_id'
         ORDER BY STATUS DESC`,
     LIST_PQRS_BY_CREATOR:
-        `SELECT  pqr.id,  pqr.customer_id, c.business_name,  
+        `SELECT  pqr.id, pqr.type, pqr.customer_id, c.business_name,  
         pqr.create_document,  pqr.create_document_type, o1.name AS create_name, o1.last_name AS create_last_name, o1.phone1 AS create_phone1, r.name AS create_roleName, 
         pqr.description,  pqr.location,  pqr.create_date,  pqr.status,  
         pqr.update_document,  pqr.update_document_type, o2.name AS update_name, o2.last_name AS update_last_name, o2.phone1 AS update_phone1,  r2.name AS update_roleName, 

@@ -81,12 +81,10 @@ const list = async function (data) {
     try {
         let inventory = await bdUtils.query(SQL.LIST_INVENTORY
             .replace(":customer_id", data.customer_id));
-        if (typeof inventory !== 'undefined' && inventory.length > 0) {
+        if (typeof inventory !== 'undefined' && inventory.length >= 0) {
             res.status = true;
             res.message = "OK";
             res.data = inventory;
-        } else {
-            throw new Error("No existen items!");
         }
         return res;
     } catch (err) {
@@ -101,12 +99,10 @@ const listAll = async function () {
     var res = new Object();
     try {
         let inventory = await bdUtils.query(SQL.LIST_ALL_INVENTORY);
-        if (typeof inventory !== 'undefined' && inventory.length > 0) {
+        if (typeof inventory !== 'undefined' && inventory.length >= 0) {
             res.status = true;
             res.message = "OK";
             res.data = inventory;
-        } else {
-            throw new Error("No existen items!");
         }
         return res;
     } catch (err) {

@@ -81,12 +81,10 @@ const list = async function (data) {
     var res = new Object();
     try {
         let customer = await bdUtils.query(SQL.LIST_CUSTOMERS);
-        if (typeof customer !== 'undefined' && customer.length > 0) {
+        if (typeof customer !== 'undefined' && customer.length >= 0) {
             res.status = true;
             res.message = "OK";
             res.data = customer;
-        } else {
-            throw new Error("No existen clientes!");
         }
         return res;
     } catch (err) {

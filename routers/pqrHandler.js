@@ -9,6 +9,7 @@ const create = async function (data) {
     try {
         let pqr = await bdUtils.executeQuery(SQL.INSERT_PQR
             .replace(":customer_id", data.customer_id)
+            .replace(":type", data.type)
             .replace(":create_document", data.create_document)
             .replace(":create_document_type", data.create_document_type)
             .replace(":description", data.description)
@@ -36,9 +37,11 @@ const update = async function (data) {
     try {
         let pqr = await bdUtils.executeQuery(SQL.UPDATE_PQR
             .replace(":id", data.id)
+            .replace(":type", data.type)
             .replace(":update_document", data.update_document)
             .replace(":update_document_type", data.update_document_type)
             .replace(":observation", data.observation)
+            .replace(":status", data.status)
         );
         logger.info("pqrHandler --> pqr:" + JSON.stringify(pqr));
         if (typeof pqr !== 'undefined') {
@@ -67,12 +70,10 @@ const list = async function (data) {
     try {
         let pqr = await bdUtils.query(SQL.LIST_PQRS
             .replace(":customer_id", data.customer_id));
-        if (typeof pqr !== 'undefined' && pqr.length > 0) {
+        if (typeof pqr !== 'undefined' && pqr.length >= 0) {
             res.status = true;
             res.message = "OK";
             res.data = pqr;
-        } else {
-            throw new Error("No existen pqrs!");
         }
         return res;
     } catch (err) {
@@ -87,12 +88,10 @@ const listAll = async function (data) {
     var res = new Object();
     try {
         let pqr = await bdUtils.query(SQL.LIST_ALL_PQRS);
-        if (typeof pqr !== 'undefined' && pqr.length > 0) {
+        if (typeof pqr !== 'undefined' && pqr.length >= 0) {
             res.status = true;
             res.message = "OK";
             res.data = pqr;
-        } else {
-            throw new Error("No existen pqrs!");
         }
         return res;
     } catch (err) {
@@ -110,12 +109,10 @@ const listByCreator = async function (data) {
             .replace(":customer_id", data.customer_id)
             .replace(":create_document", data.document)
             .replace(":create_document_type", data.document_type));
-        if (typeof pqr !== 'undefined' && pqr.length > 0) {
+        if (typeof pqr !== 'undefined' && pqr.length >= 0) {
             res.status = true;
             res.message = "OK";
             res.data = pqr;
-        } else {
-            throw new Error("No existen pqrs creadas por este usuario!");
         }
         return res;
     } catch (err) {

@@ -179,12 +179,10 @@ const list = async function () {
     var res = new Object();
     try {
         let user = await bdUtils.query(SQL.LIST_USERS);
-        if (typeof user !== 'undefined' && user.length > 0) {
+        if (typeof user !== 'undefined' && user.length >= 0) {
             res.status = true;
             res.message = "OK";
             res.data = user;
-        } else {
-            throw new Error("No existen usuarios!");
         }
         return res;
     } catch (err) {
@@ -199,12 +197,10 @@ const listRoles = async function () {
     var res = new Object();
     try {
         let user = await bdUtils.query(SQL.LIST_ROLES_USERS);
-        if (typeof user !== 'undefined' && user.length > 0) {
+        if (typeof user !== 'undefined' && user.length >= 0) {
             res.status = true;
             res.message = "OK";
             res.data = user;
-        } else {
-            throw new Error("No existen roles!");
         }
         return res;
     } catch (err) {

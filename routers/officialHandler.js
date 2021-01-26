@@ -117,12 +117,10 @@ const list = async function (data) {
     try {
         let official = await bdUtils.query(SQL.LIST_OFFICIALS
             .replace(":customer_id", data.customer_id));
-        if (typeof official !== 'undefined' && official.length > 0) {
+        if (typeof official !== 'undefined' && official.length >= 0) {
             res.status = true;
             res.message = "OK";
             res.data = official;
-        } else {
-            throw new Error("No existen funcionarios!");
         }
         return res;
     } catch (err) {
@@ -137,12 +135,10 @@ const listRoles = async function () {
     var res = new Object();
     try {
         let role = await bdUtils.query(SQL.LIST_ROLES_OFFICIALS);
-        if (typeof role !== 'undefined' && role.length > 0) {
+        if (typeof role !== 'undefined' && role.length >= 0) {
             res.status = true;
             res.message = "OK";
             res.data = role;
-        } else {
-            throw new Error("No existen roles!");
         }
         return res;
     } catch (err) {
@@ -157,12 +153,10 @@ const listAll = async function () {
     var res = new Object();
     try {
         let official = await bdUtils.query(SQL.LIST_ALL_OFFICIALS);
-        if (typeof official !== 'undefined' && official.length > 0) {
+        if (typeof official !== 'undefined' && official.length >= 0) {
             res.status = true;
             res.message = "OK";
             res.data = official;
-        } else {
-            throw new Error("No existen funcionarios!");
         }
         return res;
     } catch (err) {
