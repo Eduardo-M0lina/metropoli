@@ -125,6 +125,19 @@ const SQL = {
         FROM inventory i
         JOIN customers c on c.id = i.customer_id
         ORDER BY i.status DESC`,
+    INSERT_OBLIGATION:
+        `INSERT INTO obligations (reference, description, customer_id) VALUES (':reference', ':description', ':customer_id')`,
+    UPDATE_OBLIGATION:
+        `UPDATE obligations SET reference=':reference', description=':description', status=':status' 
+        WHERE  id=:id`,
+    LIST_OBLIGATIONS:
+        `SELECT * FROM obligations o
+        WHERE customer_id = ':customer_id' ORDER BY o.status DESC`,
+    LIST_ALL_OBLIGATIONS:
+        `SELECT o.*, c.business_name
+        FROM obligations o
+        JOIN customers c on c.id = o.customer_id
+        ORDER BY o.status DESC`,
 
 }
 

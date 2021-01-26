@@ -2,6 +2,7 @@ const express = require("express");
 const logger = require("../config/loggerUtil");
 const router = express.Router();
 
+const obligationService = require("./obligationService");
 const inventoryService = require("./inventoryService");
 const officialService = require("./officialService");
 const customerService = require("./customerService");
@@ -16,6 +17,7 @@ router.use((req, res, next) => {
   next();
 });
 
+router.use(obligationService);
 router.use(inventoryService);
 router.use(officialService);
 router.use(customerService);
