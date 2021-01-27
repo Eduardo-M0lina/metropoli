@@ -141,6 +141,67 @@ const SQL = {
         FROM obligations o
         JOIN customers c on c.id = o.customer_id
         ORDER BY o.status DESC`,
+    INSERT_ALERT:
+        `INSERT INTO scheduling_alerts (type, item, cycle, day, previous_days, month, create_date, customer_id) 
+        VALUES (':type', ':item', ':cycle', ':day', ':previous_days', ':month', SYSDATE(), ':customer_id')`,
+    UPDATE_ALERT:
+        `UPDATE scheduling_alerts SET cycle=':cycle', day=':day', previous_days=':previous_days', month=':month', status=':status' 
+        WHERE  id=:id`,
+    LIST_ALERTS:
+        `SELECT *, CASE WHEN sa.type = 1 THEN (SELECT i.name FROM inventory i WHERE i.id = sa.item) 
+                   ELSE (SELECT o.description FROM obligations o WHERE o.id = sa.item) END AS item_name
+        FROM scheduling_alerts sa
+        WHERE customer_id = ':customer_id' ORDER BY sa.status DESC`,
+    LIST_ALL_ALERTS:
+        `SELECT sa.*, c.business_name, 
+            CASE WHEN sa.type = 1 THEN (SELECT i.name FROM inventory i WHERE i.id = sa.item) 
+            ELSE (SELECT o.description FROM obligations o WHERE o.id = sa.item) END AS item_name
+        FROM scheduling_alerts sa
+        JOIN customers c on c.id = sa.customer_id
+        ORDER BY sa.status DESC`,
+    ACTIVE_ALERTS:
+        `SELECT q.* 
+        FROM (
+            SELECT sa.type, STR_TO_DATE(CONCAT((DAY(NOW())+sa.day - WEEKDAY(NOW())), ",", MONTH (NOW()), ",", YEAR(NOW())),'%d,%m,%Y') AS deadline,
+                sa.day - WEEKDAY(NOW()) AS remaining_days,
+                CASE WHEN sa.type = 1 THEN (SELECT i.id FROM inventory i WHERE i.id = sa.item) 
+                                            ELSE (SELECT o.id FROM obligations o WHERE o.id = sa.item) END AS item_id,
+                CASE WHEN sa.type = 1 THEN (SELECT i.name FROM inventory i WHERE i.id = sa.item) 
+                                            ELSE (SELECT o.description FROM obligations o WHERE o.id = sa.item) END AS item,
+                CASE WHEN sa.type = 1 THEN (SELECT i.status FROM inventory i WHERE i.id = sa.item) 
+                                        ELSE (SELECT o.status FROM obligations o WHERE o.id = sa.item) END AS item_status
+            FROM scheduling_alerts sa
+            WHERE sa.previous_days >= (sa.day - WEEKDAY(NOW())) 
+            AND sa.cycle = 1 AND sa.status = 1 AND sa.customer_id = :customer_id 
+            UNION ALL
+            SELECT sa.type, STR_TO_DATE(CONCAT(sa.day, ",", MONTH (NOW()), ",", YEAR(NOW())),'%d,%m,%Y') AS deadline,
+                DATEDIFF(STR_TO_DATE(CONCAT(sa.day, ",", MONTH (NOW()), ",", YEAR(NOW())),'%d,%m,%Y'),NOW()) AS remaining_days,
+                CASE WHEN sa.type = 1 THEN (SELECT i.id FROM inventory i WHERE i.id = sa.item) 
+                                            ELSE (SELECT o.id FROM obligations o WHERE o.id = sa.item) END AS item_id,
+                CASE WHEN sa.type = 1 THEN (SELECT i.name FROM inventory i WHERE i.id = sa.item) 
+                                            ELSE (SELECT o.description FROM obligations o WHERE o.id = sa.item) END AS item,
+                CASE WHEN sa.type = 1 THEN (SELECT i.status FROM inventory i WHERE i.id = sa.item) 
+                                        ELSE (SELECT o.status FROM obligations o WHERE o.id = sa.item) END AS item_status
+            FROM scheduling_alerts sa
+            WHERE CURDATE() >= STR_TO_DATE(CONCAT(sa.day-sa.previous_days, ",", MONTH (NOW()), ",", YEAR(NOW())),'%d,%m,%Y')
+            AND sa.cycle = 2 AND sa.status = 1 AND sa.customer_id = :customer_id 
+            UNION ALL
+            SELECT sa.type, STR_TO_DATE(CONCAT(sa.day, ",", sa.month, ",", YEAR(NOW())),'%d,%m,%Y') AS deadline,
+                DATEDIFF(STR_TO_DATE(CONCAT(sa.day, ",", sa.month, ",", YEAR(NOW())),'%d,%m,%Y'),NOW()) AS remaining_days,
+                CASE WHEN sa.type = 1 THEN (SELECT i.id FROM inventory i WHERE i.id = sa.item) 
+                                            ELSE (SELECT o.id FROM obligations o WHERE o.id = sa.item) END AS item_id,
+                CASE WHEN sa.type = 1 THEN (SELECT i.name FROM inventory i WHERE i.id = sa.item) 
+                                            ELSE (SELECT o.description FROM obligations o WHERE o.id = sa.item) END AS item,
+                CASE WHEN sa.type = 1 THEN (SELECT i.status FROM inventory i WHERE i.id = sa.item) 
+                                        ELSE (SELECT o.status FROM obligations o WHERE o.id = sa.item) END AS item_status
+            FROM scheduling_alerts sa
+            WHERE CURDATE() >= DATE_SUB(STR_TO_DATE(CONCAT(sa.day, ",", MONTH (NOW()), ",", YEAR(NOW())),'%d,%m,%Y'),INTERVAL sa.previous_days DAY)
+            AND sa.cycle = 3 AND sa.status = 1 AND sa.customer_id = :customer_id
+        ) AS q
+        WHERE item_status = 1
+        ORDER BY q.deadline asc
+        
+        `,
 
 }
 
