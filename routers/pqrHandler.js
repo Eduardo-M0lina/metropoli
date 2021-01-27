@@ -154,11 +154,31 @@ const listByCreator = async function (data) {
     }
 }
 
+const pendingPqr = async function (data) {
+    logger.info("pqrHandler --> pendingPqr()");
+    var res = new Object();
+    try {
+        let pqr = await bdUtils.query(SQL.PENDING_PQRS
+            .replace(":customer_id", data.customer_id));
+        if (typeof pqr !== 'undefined' && pqr.length >= 0) {
+            res.status = true;
+            res.message = "OK";
+            res.data = pqr[0];
+        }
+        return res;
+    } catch (err) {
+        logger.error("pqrHandler --> pendingPqr() --> Error!");
+        logger.error(err);
+        throw new Error(err);
+    }
+}
+
 module.exports = {
     create,
     update,
     closePqr,
     list,
     listAll,
-    listByCreator
+    listByCreator,
+    pendingPqr
 };

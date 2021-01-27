@@ -120,12 +120,18 @@ const SQL = {
         `UPDATE inventory SET name=':name', description=':description', location=':location ', zone=':zone ', provider=':provider', buy_date=':buy_date', value=':value', observation=':observation', status=':status' 
         WHERE  id=:id`,
     LIST_INVENTORY:
-        `SELECT i.*
+        `SELECT i.*, z.name AS zone_name, p.name AS provider_name, ic.name AS category_name
         FROM inventory i
-        WHERE customer_id = ':customer_id' ORDER BY i.status DESC`,
+        JOIN zones z on z.id = i.zone
+        JOIN providers p on p.id = i.provider
+        JOIN inventory_category ic on ic.id = i.category
+        WHERE i.customer_id = ':customer_id' ORDER BY i.status DESC`,
     LIST_ALL_INVENTORY:
-        `SELECT i.*, c.business_name
+        `SELECT i.*, c.business_name, z.name AS zone_name, p.name AS provider_name, ic.name AS category_name
         FROM inventory i
+        JOIN zones z on z.id = i.zone
+        JOIN providers p on p.id = i.provider
+        JOIN inventory_category ic on ic.id = i.category
         JOIN customers c on c.id = i.customer_id
         ORDER BY i.status DESC`,
     INSERT_OBLIGATION:
@@ -199,9 +205,32 @@ const SQL = {
             AND sa.cycle = 3 AND sa.status = 1 AND sa.customer_id = :customer_id
         ) AS q
         WHERE item_status = 1
-        ORDER BY q.deadline asc
-        
-        `,
+        ORDER BY q.deadline asc`,
+    PENDING_PQRS:
+        `SELECT COUNT(*) pendingPqr
+        FROM pqr
+        WHERE customer_id = 1 AND STATUS = 1`,
+    INSERT_ZONE:
+        `INSERT INTO zones (name, customer_id) VALUES (':name',:customer_id)`,
+    UPDATE_ZONE:
+        `UPDATE zones SET name=':name', status=':status' WHERE  id=:id`,
+    LIST_ZONES:
+        `SELECT * FROM zones z
+        WHERE customer_id = ':customer_id' ORDER BY z.status DESC`,
+    INSERT_PROVIDER:
+        `INSERT INTO providers (name, customer_id) VALUES (':name',:customer_id)`,
+    UPDATE_PROVIDER:
+        `UPDATE providers SET name=':name', status=':status' WHERE  id=:id`,
+    LIST_PROVIDERS:
+        `SELECT * FROM providers z
+        WHERE customer_id = ':customer_id' ORDER BY z.status DESC`,
+    INSERT_INVCATEGORY:
+        `INSERT INTO inventory_category (name, customer_id) VALUES (':name',:customer_id)`,
+    UPDATE_INVCATEGORY:
+        `UPDATE inventory_category SET name=':name', status=':status' WHERE  id=:id`,
+    LIST_INVCATEGORYS:
+        `SELECT * FROM inventory_category z
+        WHERE customer_id = ':customer_id' ORDER BY z.status DESC`,
 
 }
 

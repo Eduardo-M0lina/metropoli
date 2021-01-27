@@ -89,4 +89,19 @@ router.get(baseUrl.concat("/listByCreator/:customer_id/document/:document/docume
     }
 });
 
+router.get(baseUrl.concat("/pendingPqr/:customer_id"), async (req, res) => {
+    logger.info("pqrService --> pendingPqr");
+    try {
+        let response;
+        let data = new Object();
+        if (typeof req.params.customer_id !== 'undefined') data.customer_id = req.params.customer_id;
+        logger.info("pqrHandler --> pendingPqr + data:" + data);
+        response = await handler.pendingPqr(data);
+        return res.status(200).send(response);
+    } catch (e) {
+        logger.error("pqrService --> Error:" + e.message);
+        return res.status(500).send({ status: false, message: e.message });
+    }
+});
+
 module.exports = router;
