@@ -82,6 +82,15 @@ const list = async function (data) {
         let inventory = await bdUtils.query(SQL.LIST_INVENTORY
             .replace(":customer_id", data.customer_id));
         if (typeof inventory !== 'undefined' && inventory.length >= 0) {
+            for await (let element of inventory) {
+                let scheduling_alerts = await bdUtils.query(SQL.GET_ALERT
+                    .replace(":type", 1)
+                    .replace(":item", element.id)
+                    .replace(":customer_id", element.customer_id));
+                if (typeof scheduling_alerts !== 'undefined' && scheduling_alerts.length >= 0) {
+                    element.scheduling_alerts = scheduling_alerts[0];
+                }
+            }
             res.status = true;
             res.message = "OK";
             res.data = inventory;

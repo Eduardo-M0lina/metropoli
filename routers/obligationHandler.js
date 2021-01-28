@@ -63,10 +63,20 @@ const update = async function (data) {
 const list = async function (data) {
     logger.info("obligationsHandler --> list()");
     var res = new Object();
+    var obliAlert = new Object();
     try {
         let obligations = await bdUtils.query(SQL.LIST_OBLIGATIONS
             .replace(":customer_id", data.customer_id));
         if (typeof obligations !== 'undefined' && obligations.length >= 0) {
+            for await (let element of obligations) {
+                let scheduling_alerts = await bdUtils.query(SQL.GET_ALERT
+                    .replace(":type", 2)
+                    .replace(":item", element.id)
+                    .replace(":customer_id", element.customer_id));
+                if (typeof scheduling_alerts !== 'undefined' && scheduling_alerts.length >= 0) {
+                    element.scheduling_alerts = scheduling_alerts[0];
+                }
+            }
             res.status = true;
             res.message = "OK";
             res.data = obligations;

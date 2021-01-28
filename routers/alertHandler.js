@@ -70,6 +70,7 @@ const list = async function (data) {
     var res = new Object();
     try {
         let alerts = await bdUtils.query(SQL.LIST_ALERTS
+            .replace(":type", data.type)
             .replace(":customer_id", data.customer_id));
         if (typeof alerts !== 'undefined' && alerts.length >= 0) {
             res.status = true;

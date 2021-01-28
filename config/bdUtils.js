@@ -17,7 +17,7 @@ const query = async function (sql) {
     try {
         const promisePool = pool.promise();
         const [rows] = await promisePool.query(sql);
-        logger.info("bdUtils --> query() --> result: " + JSON.stringify(rows));
+        //logger.info("bdUtils --> query() --> result: " + JSON.stringify(rows));
         rows.forEach(data => {
             Object.keys(data).forEach((key) => {
                 if (data[key] === null || data[key] === '' || data[key] === undefined || data[key] === 'null' ) {

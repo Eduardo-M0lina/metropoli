@@ -157,7 +157,7 @@ const SQL = {
         `SELECT *, CASE WHEN sa.type = 1 THEN (SELECT i.name FROM inventory i WHERE i.id = sa.item) 
                    ELSE (SELECT o.description FROM obligations o WHERE o.id = sa.item) END AS item_name
         FROM scheduling_alerts sa
-        WHERE customer_id = ':customer_id' ORDER BY sa.status DESC`,
+        WHERE customer_id = ':customer_id' AND type = :type ORDER BY sa.status DESC`,
     LIST_ALL_ALERTS:
         `SELECT sa.*, c.business_name, 
             CASE WHEN sa.type = 1 THEN (SELECT i.name FROM inventory i WHERE i.id = sa.item) 
@@ -231,6 +231,10 @@ const SQL = {
     LIST_INVCATEGORYS:
         `SELECT * FROM inventory_category z
         WHERE customer_id = ':customer_id' ORDER BY z.status DESC`,
+    GET_ALERT:
+        `SELECT *
+        FROM scheduling_alerts sa
+        WHERE sa.type = :type AND item = :item AND customer_id = ':customer_id' ORDER BY sa.status DESC`,
 
 }
 

@@ -32,12 +32,13 @@ router.post(baseUrl.concat("/update"), async (req, res) => {
     }
 });
 
-router.get(baseUrl.concat("/list/:customer_id"), async (req, res) => {
+router.get(baseUrl.concat("/list/:customer_id/:type"), async (req, res) => {
     logger.info("alertService --> list");
     try {
         let response;
         let data = new Object();
         if (typeof req.params.customer_id !== 'undefined') data.customer_id = req.params.customer_id;
+        if (typeof req.params.type !== 'undefined') data.type = req.params.type;
         logger.info("alertHandler --> list + data:" + data);
         response = await handler.list(data);
         return res.status(200).send(response);
