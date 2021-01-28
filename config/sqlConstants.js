@@ -114,10 +114,12 @@ const SQL = {
         WHERE pqr.customer_id = ':customer_id' AND pqr.create_document = :create_document AND pqr.create_document_type = ':create_document_type'
         ORDER BY STATUS DESC`,
     INSERT_INVENTORY:
-        `INSERT INTO inventory (name, description, location, zone, provider, buy_date, value, observation, customer_id) 
-        VALUES (':name', ':description', ':location', ':zone', ':provider', ':buy_date', ':value', ':observation', ':customer_id')`,
+        `INSERT INTO inventory (name, description, location, zone, provider, buy_date, value, observation, customer_id, category) 
+        VALUES (':name', ':description', ':location', ':zone', ':provider', ':buy_date', ':value', ':observation', ':customer_id', ':category')`,
     UPDATE_INVENTORY:
-        `UPDATE inventory SET name=':name', description=':description', location=':location ', zone=':zone ', provider=':provider', buy_date=':buy_date', value=':value', observation=':observation', status=':status' 
+        `UPDATE inventory SET name=':name', description=':description', location=':location ', zone=':zone ', 
+                              provider=':provider', buy_date=':buy_date', value=':value', observation=':observation', 
+                              status=':status', category=':category' 
         WHERE  id=:id`,
     LIST_INVENTORY:
         `SELECT i.*, z.name AS zone_name, p.name AS provider_name, ic.name AS category_name
