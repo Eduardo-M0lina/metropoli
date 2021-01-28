@@ -1,9 +1,10 @@
 const SQL = {
     LOGING:
-        `SELECT o.document, o.document_type, o.name, o.last_name, o.municipality, o.neighborhood, o.address, o.complement_address, o.phone1, o.phone2, o.email, o.role_id, r.name AS 'roleName', o.status, o.customer_id ` +
-        `FROM officials o ` +
-        `JOIN roles r ON r.id = o.role_id ` +
-        `WHERE o.document = :document AND o.document_type = ':document_type' AND o.password = ':password' `,
+        `SELECT o.document, o.document_type, o.name, o.last_name, o.municipality, o.neighborhood, o.address, 
+        o.complement_address, o.phone1, o.phone2, o.email, o.role_id, r.name AS 'roleName', o.status, o.customer_id 
+        FROM officials o 
+        JOIN roles r ON r.id = o.role_id 
+        WHERE o.document = :document AND o.document_type = ':document_type' AND o.password = ':password' `,
     ROLES_OPTIONS:
         `SELECT m.id AS module_id, m.name AS module_name, o.id AS option_id, o.name AS option_name 
         FROM roles r
@@ -23,7 +24,8 @@ const SQL = {
         `UPDATE officials SET password=':password'
         WHERE  document=:document AND document_type=':document_type'`,
     LIST_OFFICIALS:
-        `SELECT document, document_type, o.name, last_name, municipality, neighborhood, address, complement_address, phone1, phone2, email, role_id, status, r.name AS 'roleName'
+        `SELECT document, document_type, o.name, last_name, municipality, neighborhood, address, complement_address, 
+        phone1, phone2, email, role_id, status, r.name AS 'roleName'
         FROM officials o
         JOIN roles r ON r.id = o.role_id
         WHERE customer_id = ':customer_id' ORDER BY o.status DESC`,
@@ -35,8 +37,9 @@ const SQL = {
         `INSERT INTO customers (document, document_type, business_name, department, municipality, address, complement_address, email, phone1, phone2) 
         VALUES (':document', ':document_type', ':business_name', ':department', ':municipality', ':address', ':complement_address', ':email', ':phone1', ':phone2')`,
     UPDATE_CUSTOMER:
-        `UPDATE customers SET document=':document', document_type=':document_type', business_name=':business_name', department=':department', municipality=':municipality', 
-                address=':address', complement_address=':complement_address', email=':email', phone1=':phone1', phone2=':phone2', status=':status' 
+        `UPDATE customers SET document=':document', document_type=':document_type', business_name=':business_name', 
+                department=':department', municipality=':municipality', address=':address', complement_address=':complement_address', 
+                email=':email', phone1=':phone1', phone2=':phone2', status=':status' 
         WHERE  id=:id`,
     LIST_USERS:
         `SELECT u.*, r.name AS 'roleName'
@@ -47,13 +50,14 @@ const SQL = {
         `INSERT INTO users (document, document_type, name, last_name, email, phone, password, role_id) 
         VALUES (':document', ':document_type', ':name', ':last_name', ':email', ':phone', ':password', ':role_id')`,
     UPDATE_USER:
-        `UPDATE users SET name=':name', last_name=':last_name', email=':email', phone=':phone', password=':password', role_id=':role_id', status=':status'   
+        `UPDATE users SET name=':name', last_name=':last_name', email=':email', phone=':phone', password=':password', 
+                role_id=':role_id', status=':status'   
         WHERE document=:document AND document_type=':document_type'`,
     LOGING_USER:
-        `SELECT u.document, u.document_type, u.name, u.last_name, u.email, u.phone, u.password, u.role_id, r.name AS 'roleName', u.status ` +
-        `FROM users u ` +
-        `JOIN roles r ON r.id = u.role_id ` +
-        `WHERE u.document = :document AND u.document_type = ':document_type' AND u.password = ':password' `,
+        `SELECT u.document, u.document_type, u.name, u.last_name, u.email, u.phone, u.password, u.role_id, r.name AS 'roleName', u.status 
+        FROM users u 
+        JOIN roles r ON r.id = u.role_id 
+        WHERE u.document = :document AND u.document_type = ':document_type' AND u.password = ':password' `,
     UPDATE_PASSWORD_USER:
         `UPDATE users SET password=':password' 
         WHERE document=:document AND document_type=':document_type'`,
@@ -70,7 +74,8 @@ const SQL = {
         `UPDATE pqr SET type=':type', description=':description', location=':location', status=':status' 
         WHERE  id=:id`,
     CLOSE_PQR:
-        `UPDATE pqr SET status=':status', type=':type',update_document=':update_document', update_document_type=':update_document_type', observation=':observation', update_date=SYSDATE() 
+        `UPDATE pqr SET status=':status', type=':type',update_document=':update_document', 
+                    update_document_type=':update_document_type', observation=':observation', update_date=SYSDATE() 
         WHERE  id=:id`,
     LIST_ALL_PQRS:
         `SELECT  pqr.id,  pqr.type, pqr.customer_id, c.business_name,  
@@ -237,6 +242,17 @@ const SQL = {
         `SELECT *
         FROM scheduling_alerts sa
         WHERE sa.type = :type AND item = :item AND customer_id = ':customer_id' ORDER BY sa.status DESC`,
+    INSERT_MAINTENANCE_LOG:
+        `INSERT INTO maintenance_log (inventory_id, title, description, observation, date, customer_id) 
+        VALUES (':inventory_id', ':title', ':description', ':observation', ':date', ':customer_id')`,
+    UPDATE_MAINTENANCE_LOG:
+        `UPDATE maintenance_log SET inventory_id=':inventory_id', title=':title', description=':description', 
+        observation=':observation', date=':date' WHERE  id=:id`,
+    LIST_MAINTENANCE_LOGS:
+        `SELECT ml.*, i.name
+        FROM maintenance_log ml
+        JOIN inventory i ON i.id = ml.inventory_id
+        WHERE ml.customer_id = ':customer_id' ORDER BY ml.date DESC`,
 
 }
 

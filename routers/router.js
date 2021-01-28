@@ -2,6 +2,8 @@ const express = require("express");
 const logger = require("../config/loggerUtil");
 const router = express.Router();
 
+
+const maintenanceLogService = require("./maintenanceLogService");
 const invCategoryService = require("./invCategoryService");
 const obligationService = require("./obligationService");
 const inventoryService = require("./inventoryService");
@@ -13,6 +15,7 @@ const zoneService = require("./zoneService");
 const userService = require("./userService");
 const pqrService = require("./pqrService");
 
+
 router.use((req, res, next) => {
   logger.info(`Called:  ${req.path}`);
   res.header("Access-Control-Allow-Origin", "*");
@@ -20,6 +23,7 @@ router.use((req, res, next) => {
   next();
 });
 
+router.use(maintenanceLogService);
 router.use(invCategoryService);
 router.use(obligationService);
 router.use(inventoryService);
