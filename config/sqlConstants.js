@@ -175,7 +175,12 @@ const SQL = {
     ACTIVE_ALERTS:
         `SELECT q.* 
         FROM (
-            SELECT sa.type, STR_TO_DATE(CONCAT((DAY(NOW())+sa.day - WEEKDAY(NOW())), ",", MONTH (NOW()), ",", YEAR(NOW())),'%d,%m,%Y') AS deadline,
+            SELECT sa.type, 
+                CASE WHEN sa.day < WEEKDAY(NOW()) THEN 
+						DATE_ADD(STR_TO_DATE(CONCAT((DAY(NOW())), ",", MONTH (NOW()), ",", YEAR(NOW())),'%d,%m,%Y'), INTERVAL (7-WEEKDAY(NOW())+sa.day) DAY)
+					ELSE
+						STR_TO_DATE(CONCAT((DAY(NOW())+sa.day - WEEKDAY(NOW())), ",", MONTH (NOW()), ",", YEAR(NOW())),'%d,%m,%Y')
+					END AS deadline,
                 sa.day - WEEKDAY(NOW()) AS remaining_days,
                 CASE WHEN sa.type = 1 THEN (SELECT i.id FROM inventory i WHERE i.id = sa.item) 
                                             ELSE (SELECT o.id FROM obligations o WHERE o.id = sa.item) END AS item_id,
@@ -208,7 +213,7 @@ const SQL = {
                 CASE WHEN sa.type = 1 THEN (SELECT i.status FROM inventory i WHERE i.id = sa.item) 
                                         ELSE (SELECT o.status FROM obligations o WHERE o.id = sa.item) END AS item_status
             FROM scheduling_alerts sa
-            WHERE CURDATE() >= DATE_SUB(STR_TO_DATE(CONCAT(sa.day, ",", MONTH (NOW()), ",", YEAR(NOW())),'%d,%m,%Y'),INTERVAL sa.previous_days DAY)
+            WHERE CURDATE() >= DATE_SUB(STR_TO_DATE(CONCAT(sa.day, ",", sa.month, ",", YEAR(NOW())),'%d,%m,%Y'),INTERVAL sa.previous_days DAY)
             AND sa.cycle = 3 AND sa.status = 1 AND sa.customer_id = :customer_id
         ) AS q
         WHERE item_status = 1
