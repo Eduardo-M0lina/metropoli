@@ -268,6 +268,15 @@ const SQL = {
         FROM payments p
         JOIN obligations o ON o.id = p.obligation_id
         WHERE p.customer_id = ':customer_id' ORDER BY p.date DESC`,
+    REPORT_INVENTORY:
+        `SELECT i.id, i.name, i.description, z.name AS zone_name, i.location, ic.name AS category_name, 
+            p.name AS provider_name, ic.name AS category_name, i.buy_date, i.value, i.observation,
+            CASE WHEN i.status = 1 THEN 'ACTIVO' ELSE 'INACTIVO' END status
+        FROM inventory i
+        JOIN zones z on z.id = i.zone
+        JOIN providers p on p.id = i.provider
+        JOIN inventory_category ic on ic.id = i.category
+        :where ORDER BY i.status DESC`,
 
 }
 

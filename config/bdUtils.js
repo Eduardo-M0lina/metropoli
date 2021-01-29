@@ -13,7 +13,7 @@ const pool = mysql.createPool({
 });
 
 const query = async function (sql) {
-    //logger.info("bdUtils --> query() --> sql:" + sql);
+    logger.info("bdUtils --> query() --> sql:" + sql);
     try {
         const promisePool = pool.promise();
         const [rows] = await promisePool.query(sql);
