@@ -13,7 +13,7 @@ const pool = mysql.createPool({
 });
 
 const query = async function (sql) {
-    logger.info("bdUtils --> query() --> sql:" + sql);
+    //logger.info("bdUtils --> query() --> sql:" + sql);
     try {
         const promisePool = pool.promise();
         const [rows] = await promisePool.query(sql);
@@ -25,7 +25,7 @@ const query = async function (sql) {
                 }
             });
         })
-        logger.info("bdUtils --> query() --> result: " + JSON.stringify(rows));
+        //logger.info("bdUtils --> query() --> result: " + JSON.stringify(rows));
         return rows;
     } catch (err) {
         console.log(err);
@@ -34,11 +34,11 @@ const query = async function (sql) {
 }
 
 const executeQuery = async function (sql) {
-    logger.info("bdUtils --> executeQuery() --> sql:" + sql);
+    //logger.info("bdUtils --> executeQuery() --> sql:" + sql);
     try {
         const promisePool = pool.promise();
         const res = await promisePool.query(sql);
-        logger.info("bdUtils --> executeQuery() --> result: " + JSON.stringify(res));
+        //logger.info("bdUtils --> executeQuery() --> result: " + JSON.stringify(res));
         return res;
     } catch (err) {
         console.log(err);

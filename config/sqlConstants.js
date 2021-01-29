@@ -258,6 +258,16 @@ const SQL = {
         FROM maintenance_log ml
         JOIN inventory i ON i.id = ml.inventory_id
         WHERE ml.customer_id = ':customer_id' ORDER BY ml.date DESC`,
+    INSERT_PAYMENT:
+        `INSERT INTO payments (obligation_id, value, date, customer_id) 
+        VALUES (':obligation_id', ':value', ':date', ':customer_id')`,
+    UPDATE_PAYMENT:
+        `UPDATE payments SET obligation_id=':obligation_id', value=':value', date=':date' WHERE  id=:id`,
+    LIST_PAYMENTS:
+        `SELECT p.*, o.description
+        FROM payments p
+        JOIN obligations o ON o.id = p.obligation_id
+        WHERE p.customer_id = ':customer_id' ORDER BY p.date DESC`,
 
 }
 
