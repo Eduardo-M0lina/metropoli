@@ -177,11 +177,11 @@ const SQL = {
         FROM (
             SELECT sa.type, 
                 CASE WHEN sa.day < WEEKDAY(NOW()) THEN 
-						DATE_ADD(STR_TO_DATE(CONCAT((DAY(NOW())), ",", MONTH (NOW()), ",", YEAR(NOW())),'%d,%m,%Y'), INTERVAL (7-WEEKDAY(NOW())+sa.day) DAY)
-					ELSE
-						STR_TO_DATE(CONCAT((DAY(NOW())+sa.day - WEEKDAY(NOW())), ",", MONTH (NOW()), ",", YEAR(NOW())),'%d,%m,%Y')
-					END AS deadline,
-                sa.day - WEEKDAY(NOW()) AS remaining_days,
+                    DATE_ADD(STR_TO_DATE(CONCAT((DAY(NOW())), ",", MONTH (NOW()), ",", YEAR(NOW())),'%d,%m,%Y'), INTERVAL (7-WEEKDAY(NOW())+sa.day) DAY)
+                ELSE
+                    STR_TO_DATE(CONCAT((DAY(NOW())+sa.day - WEEKDAY(NOW())), ",", MONTH (NOW()), ",", YEAR(NOW())),'%d,%m,%Y')
+                END AS deadline,
+                CASE WHEN sa.day < WEEKDAY(NOW()) THEN sa.day + 7 - WEEKDAY(NOW()) ELSE sa.day - WEEKDAY(NOW()) END AS remaining_days,
                 CASE WHEN sa.type = 1 THEN (SELECT i.id FROM inventory i WHERE i.id = sa.item) 
                                             ELSE (SELECT o.id FROM obligations o WHERE o.id = sa.item) END AS item_id,
                 CASE WHEN sa.type = 1 THEN (SELECT i.name FROM inventory i WHERE i.id = sa.item) 
