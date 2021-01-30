@@ -201,7 +201,7 @@ const SQL = {
                 CASE WHEN sa.type = 1 THEN (SELECT i.status FROM inventory i WHERE i.id = sa.item) 
                                         ELSE (SELECT o.status FROM obligations o WHERE o.id = sa.item) END AS item_status
             FROM scheduling_alerts sa
-            WHERE CURDATE() >= STR_TO_DATE(CONCAT(sa.day-sa.previous_days, ",", MONTH (NOW()), ",", YEAR(NOW())),'%d,%m,%Y')
+            WHERE CURDATE() <= STR_TO_DATE(CONCAT(sa.day-sa.previous_days, ",", MONTH (NOW()), ",", YEAR(NOW())),'%d,%m,%Y')
             AND sa.cycle = 2 AND sa.status = 1 AND sa.customer_id = :customer_id 
             UNION ALL
             SELECT sa.type, STR_TO_DATE(CONCAT(sa.day, ",", sa.month, ",", YEAR(NOW())),'%d,%m,%Y') AS deadline,
@@ -264,7 +264,7 @@ const SQL = {
     UPDATE_PAYMENT:
         `UPDATE payments SET obligation_id=':obligation_id', value=':value', date=':date' WHERE  id=:id`,
     LIST_PAYMENTS:
-        `SELECT p.*, o.description
+        `SELECT p.*, o.description, o.reference
         FROM payments p
         JOIN obligations o ON o.id = p.obligation_id
         WHERE p.customer_id = ':customer_id' ORDER BY p.date DESC`,
@@ -277,6 +277,41 @@ const SQL = {
         JOIN providers p on p.id = i.provider
         JOIN inventory_category ic on ic.id = i.category
         :where ORDER BY i.status DESC`,
+    REPORT_MAINTENANCE_LOG:
+        `SELECT ml.*, i.name
+        FROM maintenance_log ml
+        JOIN inventory i ON i.id = ml.inventory_id
+        :where ORDER BY ml.date DESC`,
+    REPORT_OBLIGATIONS:
+        `SELECT p.*, o.description, o.reference
+        FROM payments p
+        JOIN obligations o ON o.id = p.obligation_id
+        :where ORDER BY p.date DESC`,
+    REPORT_OFFICIALS:
+        `SELECT document, document_type, o.name, last_name, municipality, neighborhood, address, complement_address, 
+        phone1, phone2, email, role_id, status, r.name AS 'roleName'
+        FROM officials o
+        JOIN roles r ON r.id = o.role_id
+        :where ORDER BY o.status DESC`,
+    REPORT_PQR:
+        `SELECT  pqr.id, pqr.type, pqr.customer_id, c.business_name,  
+        pqr.create_document,  pqr.create_document_type, o1.name AS create_name, o1.last_name AS create_last_name, o1.phone1 AS create_phone1, r.name AS create_roleName, 
+        pqr.description,  pqr.location,  pqr.create_date,  pqr.status,  
+        pqr.update_document,  pqr.update_document_type, o2.name AS update_name, o2.last_name AS update_last_name, o2.phone1 AS update_phone1,  r2.name AS update_roleName, 
+        pqr.observation, pqr.update_date, DATEDIFF(pqr.update_date,pqr.create_date) AS responseTime_days, TIMESTAMPDIFF(HOUR, pqr.create_date, pqr.update_date) AS responseTime_hours
+        FROM pqr pqr
+        JOIN customers c on c.id = pqr.customer_id
+        JOIN officials o1 ON o1.document = pqr.create_document AND o1.document_type = pqr.create_document_type
+        LEFT JOIN officials o2 ON o2.document = pqr.update_document AND o2.document_type = pqr.update_document_type
+        JOIN roles r ON r.id = o1.role_id 
+        LEFT JOIN roles r2 ON r2.id = o2.role_id 
+        :where
+        ORDER BY STATUS DESC`,
+    REPORT_RESUME:
+        `SELECT p.*, o.description, o.reference
+        FROM payments p
+        JOIN obligations o ON o.id = p.obligation_id
+        :where ORDER BY p.date DESC`,
 
 }
 
