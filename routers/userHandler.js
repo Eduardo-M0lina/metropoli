@@ -110,7 +110,6 @@ const update = async function (data) {
             .replace(":last_name", data.last_name)
             .replace(":phone", data.phone)
             .replace(":email", data.email)
-            .replace(":password", CryptoJS.MD5(data.password.toString()))
             .replace(":role_id", data.role_id)
             .replace(":status", data.status)
         );

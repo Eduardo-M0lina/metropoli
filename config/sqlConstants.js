@@ -50,7 +50,7 @@ const SQL = {
         `INSERT INTO users (document, document_type, name, last_name, email, phone, password, role_id) 
         VALUES (':document', ':document_type', ':name', ':last_name', ':email', ':phone', ':password', ':role_id')`,
     UPDATE_USER:
-        `UPDATE users SET name=':name', last_name=':last_name', email=':email', phone=':phone', password=':password', 
+        `UPDATE users SET name=':name', last_name=':last_name', email=':email', phone=':phone', 
                 role_id=':role_id', status=':status'   
         WHERE document=:document AND document_type=':document_type'`,
     LOGING_USER:
