@@ -64,8 +64,10 @@ const SQL = {
     LIST_ROLES_USERS:
         `SELECT * FROM roles where id in (2)`,
     LIST_ALL_OFFICIALS:
-        `SELECT o.*, c.business_name FROM officials o
+        `SELECT o.*, c.business_name, r.name AS 'roleName'
+        FROM officials o
         JOIN customers c ON o.customer_id = c.id
+        JOIN roles r ON r.id = o.role_id
         ORDER BY o.status DESC`,
     INSERT_PQR:
         `INSERT INTO pqr (customer_id, type, create_document, create_document_type, description, location, create_date) 
@@ -221,7 +223,7 @@ const SQL = {
     PENDING_PQRS:
         `SELECT COUNT(*) pendingPqr
         FROM pqr
-        WHERE customer_id = 1 AND STATUS = 1`,
+        WHERE customer_id = :customer_id AND STATUS = 1`,
     INSERT_ZONE:
         `INSERT INTO zones (name, customer_id) VALUES (':name',:customer_id)`,
     UPDATE_ZONE:
