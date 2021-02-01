@@ -69,7 +69,6 @@ const closePqr = async function (data) {
     try {
         let pqr = await bdUtils.executeQuery(SQL.CLOSE_PQR
             .replace(":id", data.id)
-            .replace(":type", data.type)
             .replace(":update_document", data.update_document)
             .replace(":update_document_type", data.update_document_type)
             .replace(":observation", data.observation)
