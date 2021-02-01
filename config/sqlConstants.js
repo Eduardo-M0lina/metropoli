@@ -297,7 +297,8 @@ const SQL = {
         JOIN roles r ON r.id = o.role_id
         :where ORDER BY o.status DESC`,
     REPORT_PQR:
-        `SELECT  pqr.id, pqr.type, pqr.customer_id, c.business_name,  
+        `SELECT  pqr.id, 
+        CASE WHEN pqr.type = 1 THEN 'PETICION' ELSE CASE WHEN pqr.type = 2 THEN 'QUEJA' ELSE 'RECLAMO' END END AS type, pqr.customer_id, c.business_name,  
         pqr.create_document,  pqr.create_document_type, o1.name AS create_name, o1.last_name AS create_last_name, o1.phone1 AS create_phone1, r.name AS create_roleName, 
         pqr.description,  pqr.location,  pqr.create_date,  
         CASE WHEN pqr.status = 1 THEN 'ABIERTA' ELSE 'CERRADA' END status,  
@@ -310,7 +311,7 @@ const SQL = {
         JOIN roles r ON r.id = o1.role_id 
         LEFT JOIN roles r2 ON r2.id = o2.role_id 
         :where
-        ORDER BY STATUS DESC`,
+        ORDER BY pqr.create_date DESC`,
     REPORT_RESUME:
         `SELECT p.*, o.description, o.reference
         FROM payments p

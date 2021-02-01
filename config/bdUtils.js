@@ -34,7 +34,7 @@ const query = async function (sql) {
 }
 
 const executeQuery = async function (sql) {
-    //logger.info("bdUtils --> executeQuery() --> sql:" + sql);
+    logger.info("bdUtils --> executeQuery() --> sql:" + sql);
     try {
         const promisePool = pool.promise();
         const res = await promisePool.query(sql);

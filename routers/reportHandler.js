@@ -8,10 +8,12 @@ const inventory = async function (data) {
     var res = new Object();
     try {
         let where = '', date, category, provider, zone, filter;
-        if (typeof data.dateRange !== 'undefined' || data.dateRange !== undefined) {
-            date = 'i.buy_date BETWEEN \'' + data.dateRange.startDate + '\' AND \'' + data.dateRange.endDate + '\' ';
-            filter = true;
-            where = 'WHERE ' + date;
+        if (typeof data.dateRange !== 'undefined' || data.dateRange !== undefined || data.dateRange !== null) {
+            if (data.dateRange.startDate != null || data.dateRange.endDate != null) {
+                date = 'i.buy_date BETWEEN \'' + data.dateRange.startDate + '\' AND \'' + data.dateRange.endDate + '\' ';
+                filter = true;
+                where = 'WHERE ' + date;
+            }
         }
         if (typeof data.category !== 'undefined' && data.category > 0) {
             category = 'i.category IN (' + data.category.join() + ') ';
@@ -54,10 +56,12 @@ const maintenanceLog = async function (data) {
     var res = new Object();
     try {
         let where = '', date, inventory_id, filter;
-        if (typeof data.dateRange !== 'undefined' || data.dateRange !== undefined) {
-            date = 'ml.date BETWEEN \'' + data.dateRange.startDate + '\' AND \'' + data.dateRange.endDate + '\' ';
-            filter = true;
-            where = 'WHERE ' + date;
+        if (typeof data.dateRange !== 'undefined' || data.dateRange !== undefined || data.dateRange !== null) {
+            if (data.dateRange.startDate != null || data.dateRange.endDate != null) {
+                date = 'ml.date BETWEEN \'' + data.dateRange.startDate + '\' AND \'' + data.dateRange.endDate + '\' ';
+                filter = true;
+                where = 'WHERE ' + date;
+            }
         }
         if (typeof data.inventory_id !== 'undefined' && data.inventory_id > 0) {
             inventory_id = 'i.id IN (' + data.inventory_id.join() + ') ';
@@ -90,10 +94,12 @@ const obligation = async function (data) {
     var res = new Object();
     try {
         let where = '', date, obligation_id, filter;
-        if (typeof data.dateRange !== 'undefined' || data.dateRange !== undefined) {
-            date = 'p.date BETWEEN \'' + data.dateRange.startDate + '\' AND \'' + data.dateRange.endDate + '\' ';
-            filter = true;
-            where = 'WHERE ' + date;
+        if (typeof data.dateRange !== 'undefined' || data.dateRange !== undefined || data.dateRange !== null) {
+            if (data.dateRange.startDate != null || data.dateRange.endDate != null) {
+                date = 'p.date BETWEEN \'' + data.dateRange.startDate + '\' AND \'' + data.dateRange.endDate + '\' ';
+                filter = true;
+                where = 'WHERE ' + date;
+            }
         }
         if (typeof data.obligation_id !== 'undefined' && data.obligation_id > 0) {
             obligation_id = 'o.id IN (' + data.obligation_id.join() + ') ';
@@ -157,10 +163,12 @@ const pqr = async function (data) {
     var res = new Object();
     try {
         let where = '', date, type, filter;
-        if (typeof data.dateRange !== 'undefined' || data.dateRange !== undefined) {
-            date = 'pqr.create_date BETWEEN \'' + data.dateRange.startDate + '\' AND \'' + data.dateRange.endDate + '\' ';
-            filter = true;
-            where = 'WHERE ' + date;
+        if (typeof data.dateRange !== 'undefined' || data.dateRange !== undefined || data.dateRange !== null) {
+            if (data.dateRange.startDate != null || data.dateRange.endDate != null) {
+                date = 'pqr.create_date BETWEEN \'' + data.dateRange.startDate + '\' AND \'' + data.dateRange.endDate + '\' ';
+                filter = true;
+                where = 'WHERE ' + date;
+            }
         }
         if (typeof data.type !== 'undefined' && data.type > 0) {
             type = 'pqr.type IN (' + data.type.join() + ') ';
